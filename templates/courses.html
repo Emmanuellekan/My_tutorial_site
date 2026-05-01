@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}DevRise | Course Library{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">Course library</span>
+    <h1>Explore the programs designed to grow your development skills.</h1>
+    <p>
+      Every track is focused on practical outcomes, clean fundamentals, and the confidence
+      to build projects on your own.
+    </p>
+  </div>
+</section>
+
+<section class="section" id="learning-paths">
+  <div class="container">
+    <div class="section-heading">
+      <span class="eyebrow">Programs</span>
+      <h2>Pick the route that fits your next step.</h2>
+      <p>Learn one specialty deeply or combine tracks to become a more complete developer.</p>
+    </div>
+
+    <div class="grid grid-3">
+      <a href="{{ url_for('main.start_learning') }}" class="course-link reveal">
+        <article class="card course-card">
+          <img
+            class="course-image"
+            src="{{ url_for('static', filename='images/html.jpeg') }}"
+            alt="HTML course preview"
+          >
+          <span class="pill">Start Here</span>
+          <h3>HTML for Beginners</h3>
+          <p>Take students from basic tags and page structure to the confidence to build real webpages.</p>
+        </article>
+      </a>
+      <a href="{{ url_for('main.start_learning') }}" class="course-link reveal">
+        <article class="card course-card">
+          <img
+            class="course-image"
+            src="{{ url_for('static', filename='images/css.jpg') }}"
+            alt="CSS course preview"
+          >
+          <span class="pill">Next Step</span>
+          <h3>CSS for Styling</h3>
+          <p>Guide students into colors, spacing, typography, layouts, and responsive design after HTML.</p>
+        </article>
+      </a>
+      <article class="card course-card reveal">
+        <img
+          class="course-image"
+          src="{{ url_for('static', filename='images/javascript.webp') }}"
+          alt="JavaScript course preview"
+        >
+        <span class="pill">Not Available</span>
+        <h3>JavaScript Essentials</h3>
+        <p>This course is not available yet. Students should start with HTML and CSS for now.</p>
+      </article>
+      <article class="card course-card reveal">
+        <img
+          class="course-image"
+          src="{{ url_for('static', filename='images/python.jpg') }}"
+          alt="Python with Flask course preview"
+        >
+        <span class="pill">Not Available</span>
+        <h3>Python with Flask</h3>
+        <p>This course is not available yet. It will be added after the beginner frontend classes.</p>
+      </article>
+      <article class="card course-card reveal">
+        <span class="pill">Not Available</span>
+        <h3>APIs & Data Flow</h3>
+        <p>This course is not available yet. Students can return later when more lessons are released.</p>
+      </article>
+      <article class="card course-card reveal">
+        <span class="pill">Not Available</span>
+        <h3>Portfolio Project Lab</h3>
+        <p>This course is not available yet. The current focus is on HTML and CSS learning paths.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section-muted">
+  <div class="container split-section">
+    <div>
+      <span class="eyebrow">How it works</span>
+      <h2>Simple, supportive, and built for consistency.</h2>
+      <p>
+        Instead of overwhelming students with random lessons, DevRise is organized around
+        progressive growth and repeatable building practice.
+      </p>
+    </div>
+
+    <div class="stack-list">
+      <article class="card step-card reveal">
+        <strong>01</strong>
+        <h3>Learn the concept</h3>
+        <p>Start with focused lessons that explain what matters and why it matters.</p>
+      </article>
+      <article class="card step-card reveal">
+        <strong>02</strong>
+        <h3>Practice with guidance</h3>
+        <p>Apply each topic immediately through hands-on tasks and realistic project sections.</p>
+      </article>
+      <article class="card step-card reveal">
+        <strong>03</strong>
+        <h3>Ship a complete result</h3>
+        <p>Finish with portfolio-ready work that shows clear improvement and practical ability.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-heading">
+      <span class="eyebrow">Testimonials</span>
+      <h2>Students are already feeling the difference in how they learn.</h2>
+      <p>Short wins, clearer lessons, and practical momentum are what keep learners coming back.</p>
+    </div>
+
+    <div class="testimonial-spotlight reveal">
+      <div class="testimonial-intro">
+        <span class="pill">Student Voices</span>
+        <h3>Learning that feels guided instead of confusing.</h3>
+        <p>
+          DevRise is built for students who want structure, encouragement, and visible progress
+          without being overwhelmed by too many disconnected lessons.
+        </p>
+        <div class="testimonial-metric">
+          <strong>4.9/5</strong>
+          <span>Average learner satisfaction from early feedback sessions.</span>
+        </div>
+      </div>
+
+      <div class="testimonial-list">
+        <article class="card testimonial-card reveal">
+          <p class="testimonial-quote">
+            “I finally understood HTML because the lessons were broken into simple steps I could actually follow.”
+          </p>
+          <div class="testimonial-person">
+            <strong>Amara O.</strong>
+            <span>Beginner Student</span>
+          </div>
+        </article>
+
+        <article class="card testimonial-card reveal">
+          <p class="testimonial-quote">
+            “The path from HTML to CSS felt smooth. I stopped jumping between random tutorials and started building.”
+          </p>
+          <div class="testimonial-person">
+            <strong>Daniel K.</strong>
+            <span>Frontend Learner</span>
+          </div>
+        </article>
+
+        <article class="card testimonial-card reveal">
+          <p class="testimonial-quote">
+            “What I liked most was the clarity. I always knew what to learn next and what to practice.”
+          </p>
+          <div class="testimonial-person">
+            <strong>Chioma E.</strong>
+            <span>Self-Taught Developer</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
