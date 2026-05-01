@@ -267,12 +267,22 @@ body.light-theme .site-header.is-scrolled {
 }
 
 .logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
   font-family: 'JetBrains Mono', monospace;
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #e8f1ff;
+}
+
+.logo img {
+  width: 2.45rem;
+  height: 2.45rem;
+  object-fit: contain;
+  border-radius: 50%;
 }
 
 body.light-theme .logo {

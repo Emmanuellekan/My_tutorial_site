@@ -57,8 +57,8 @@ def register_app(app, db):
 
     @main.route('/')
     @login_required
-    def home():
-        return render_template('home.html')
+    def index():
+        return render_template('index.html')
 
 
     @main.route('/profile')
@@ -167,7 +167,7 @@ def register_app(app, db):
                 return auth_error('Incorrect password.', 'main.login')
 
             login_user(user, remember=True)
-            return auth_success('Login successful.', 'main.home')
+            return auth_success('Login successful.', 'main.index')
 
         return render_template('login.html', user=current_user)
 
