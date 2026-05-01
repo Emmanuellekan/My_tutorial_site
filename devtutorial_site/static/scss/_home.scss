@@ -1,0 +1,13 @@
+.page-hero {
+  text-align: left;
+
+  h1 {
+    max-width: 14ch;
+  }
+}
+
+@media (max-width: 900px) {
+  .page-hero h1 {
+    max-width: none;
+  }
+}

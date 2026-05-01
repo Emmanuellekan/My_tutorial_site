@@ -1,0 +1,133 @@
+@keyframes ambientGlowShift {
+  0% {
+    transform: translate3d(-2%, -3%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, 3%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-2%, 4%, 0) scale(1.02);
+  }
+}
+
+@keyframes ambientMeshFloat {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    transform: translateY(0);
+  }
+  50% {
+    transform: translate3d(-3%, 4%, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(3%, -2%, 0) scale(1.02);
+    transform: translateY(80%);
+
+  }
+}
+
+body {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(88, 166, 255, 0.2), transparent 24%),
+    radial-gradient(circle at right 10%, rgba(110, 231, 183, 0.14), transparent 20%),
+    linear-gradient(180deg, #050d18 0%, $bg 50%, #040b15 100%);
+  color: $text;
+  font-family: 'Space Grotesk', sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: -18%;
+  z-index: -2;
+  pointer-events: none;
+  will-change: transform;
+}
+
+body::before {
+  background:
+    radial-gradient(circle at 18% 22%, rgba(88, 166, 255, 0.24), transparent 22%),
+    radial-gradient(circle at 78% 18%, rgba(110, 231, 183, 0.18), transparent 20%),
+    radial-gradient(circle at 50% 78%, rgba(47, 129, 247, 0.16), transparent 24%);
+  animation: ambientGlowShift .5s ease-in-out infinite alternate;
+}
+
+body::after {
+  z-index: -3;
+  opacity: 0.75;
+  background:
+    radial-gradient(circle at 28% 30%, rgba(9, 20, 38, 0.2), transparent 28%),
+    radial-gradient(circle at 72% 62%, rgba(110, 231, 183, 0.1), transparent 24%),
+    radial-gradient(circle at 50% 50%, rgba(88, 166, 255, 0.08), transparent 38%);
+  animation: ambientMeshFloat .7s ease-in-out infinite alternate;
+}
+
+.site-shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.container {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+main {
+  overflow: hidden;
+}
+
+.site-main::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(88, 166, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(88, 166, 255, 0.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent 92%);
+  animation: ambientMeshFloat 30s ease-in-out infinite alternate;
+}
+
+section {
+  position: relative;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.1;
+}
+
+p {
+  color: $muted;
+}
+
+body.light-theme::before {
+  background:
+    radial-gradient(circle at 16% 20%, rgba(88, 166, 255, 0.18), transparent 23%),
+    radial-gradient(circle at 80% 18%, rgba(20, 147, 93, 0.14), transparent 20%),
+    radial-gradient(circle at 50% 80%, rgba(47, 129, 247, 0.12), transparent 24%);
+}
+
+body.light-theme::after {
+  opacity: 0.85;
+  background:
+    radial-gradient(circle at 24% 28%, rgba(255, 255, 255, 0.72), transparent 24%),
+    radial-gradient(circle at 75% 60%, rgba(88, 166, 255, 0.08), transparent 26%),
+    radial-gradient(circle at 52% 50%, rgba(110, 231, 183, 0.12), transparent 34%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after,
+  .site-main::before {
+    animation: none;
+  }
+}

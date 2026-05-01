@@ -1,0 +1,23 @@
+$bg: #07111f;
+$surface: #0c1729;
+$surface-strong: #101d33;
+$surface-muted: #0a1322;
+$text: #e8f1ff;
+$muted: #90a0b7;
+$border: rgba(115, 155, 255, 0.16);
+$primary: #58a6ff;
+$primary-dark: #2f81f7;
+$accent: #6ee7b7;
+$accent-soft: rgba(110, 231, 183, 0.12);
+$shadow: 0 20px 50px rgba(1, 8, 20, 0.45);
+$radius-lg: 24px;
+$radius-md: 18px;
+$radius-sm: 12px;
+$transition: all 0.28s ease;
+
+// Backward-compatible aliases for older partials that may still be referenced.
+$bg-light: $surface;
+$text-light: $text;
+$text-muted: $muted;
+$card: $surface-strong;
+$radius: $radius-md;
