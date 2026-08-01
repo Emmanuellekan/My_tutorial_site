@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}DevRise | Learn Web Development with Confidence{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container hero-layout">
+    <div class="hero-copy">
+      <span class="eyebrow">Build a real developer career</span>
+      <h1>Learn modern web development with a plan that makes sense.</h1>
+      <p>
+        DevRise helps beginners and growing developers move from confusion to confidence
+        through guided lessons, project practice, and mentorship-friendly structure.
+      </p>
+
+      <div class="hero-actions">
+        <a href="{{ url_for('main.courses') }}" class="btn">Browse Courses</a>
+        <a href="#why-devrise" class="btn btn-secondary">See Why It Works</a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-card reveal">
+          <strong data-count="12">12</strong>
+          <span>Project-based modules</span>
+        </div>
+        <div class="stat-card reveal">
+          <strong data-count="6">6</strong>
+          <span>Focused learning tracks</span>
+        </div>
+        <div class="stat-card reveal">
+          <strong data-count="100" data-suffix="%">100%</strong>
+          <span>Beginner-friendly structure</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-panel reveal">
+      <div class="panel-card">
+        <p class="panel-label">What you get</p>
+        <div class="panel-terminal">
+          <span>frontend.track</span>
+          <span>backend.core</span>
+          <span>career.mode</span>
+        </div>
+        <ul class="check-list">
+          <li>Clear weekly roadmap</li>
+          <li>Portfolio-ready assignments</li>
+          <li>Frontend and backend foundations</li>
+          <li>Responsive design practice</li>
+          <li>Career-ready project workflow</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why-devrise">
+  <div class="container">
+    <div class="section-heading">
+      <span class="eyebrow">Why students choose us</span>
+      <h2>A standard learning experience built for real progress.</h2>
+      <p>
+        We combine clean instruction, practical assignments, and a simple growth path so
+        students can stay focused and keep building.
+      </p>
+    </div>
+
+    <div class="grid grid-3">
+      <article class="card feature-card reveal">
+        <h3>Structured Curriculum</h3>
+        <p>Follow a clear sequence from HTML and CSS fundamentals to backend workflows and deployment habits.</p>
+      </article>
+      <article class="card feature-card reveal">
+        <h3>Project-Based Learning</h3>
+        <p>Each major topic leads into something you can build, refine, and include in your portfolio.</p>
+      </article>
+      <article class="card feature-card reveal">
+        <h3>Job-Ready Mindset</h3>
+        <p>Learn version control, clean UI thinking, and practical development standards from the beginning.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section-muted">
+  <div class="container split-section">
+    <div>
+      <span class="eyebrow">Learning paths</span>
+      <h2>Choose a path that matches where you want to grow.</h2>
+      <p>
+        Whether you want to become confident with interfaces, APIs, or complete web apps,
+        DevRise gives you a route that is easy to follow and flexible enough to grow with you.
+      </p>
+    </div>
+
+    <div class="path-list">
+      <article class="card path-card reveal">
+        <h3>Frontend Development</h3>
+        <p>Master layout, responsive design, interaction patterns, and polished user interfaces.</p>
+      </article>
+      <article class="card path-card reveal">
+        <h3>Backend Development</h3>
+        <p>Work with Python, Flask, routing, APIs, and data-driven application logic.</p>
+      </article>
+      <article class="card path-card reveal">
+        <h3>Fullstack Foundation</h3>
+        <p>Connect frontend and backend skills into real products that feel complete and useful.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container cta-banner reveal">
+    <div>
+      <span class="eyebrow">Start building</span>
+      <h2>Turn your interest in tech into a skill you can show.</h2>
+    </div>
+    <a href="{{ url_for('main.courses') }}" class="btn">View Course Library</a>
+  </div>
+</section>
+{% endblock %}
