@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "run.py",
+      "src": "api/index.py",
       "use": "@vercel/python",
       "config": { "maxDuration": 10 }
     }
@@ -10,7 +10,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "run.py"
+      "dest": "api/index.py"
     }
   ]
 }
