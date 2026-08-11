@@ -1,0 +1,23 @@
+Metadata-Version: 2.4
+Name: vercel-headers
+Version: 0.7.1
+Summary: Request header helpers for Vercel Python applications
+License-Expression: MIT
+License-File: LICENSE
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+
+# Headers
+
+`vercel.headers` stores request headers for Vercel Function helpers and exposes
+IP address and geolocation helpers.
+
+Register request headers once per request:
+
+```python
+from vercel.headers import set_headers
+
+set_headers(request.headers)
+```
+
+OIDC and cache helpers read the same registered header context.

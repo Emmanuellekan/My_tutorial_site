@@ -1,0 +1,2 @@
+[console_scripts]
+vercel = vercel.__main__:main

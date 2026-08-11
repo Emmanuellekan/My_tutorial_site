@@ -1,0 +1,3 @@
+[console_scripts]
+sandbox = vercel.sandbox.__main__:main
+vercel-sandbox = vercel.sandbox.__main__:main
