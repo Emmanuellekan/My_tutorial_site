@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Analytics - DevRise Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div class="admin-page-title">
+    <h1>Analytics</h1>
+    <p>View platform analytics and insights.</p>
+  </div>
+</div>
+
+<div class="admin-section">
+  <div class="admin-section-header">
+    <h2>Platform Analytics</h2>
+  </div>
+  <div id="analytics-feedback" class="admin-inline-feedback" role="status" aria-live="polite"></div>
+  <div class="admin-stats-grid" id="analytics-cards"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/admin-analytics.js') }}"></script>{% endblock %}

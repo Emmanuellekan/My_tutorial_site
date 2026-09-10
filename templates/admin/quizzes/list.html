@@ -1,0 +1,53 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Quizzes - DevRise Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div class="admin-page-title">
+    <h1>Quizzes</h1>
+    <p>Manage all quizzes on your platform.</p>
+  </div>
+  <div class="admin-page-actions">
+    <button type="button" class="admin-btn admin-btn-primary" id="new-quiz-button">New Quiz</button>
+  </div>
+</div>
+
+<div class="admin-section">
+  <div class="admin-section-header">
+    <h2>Quiz List</h2>
+  </div>
+  <div id="quiz-feedback" class="admin-inline-feedback" role="status" aria-live="polite"></div>
+  <div class="admin-table-wrap"><table class="admin-table">
+    <thead><tr><th>Title</th><th>Course</th><th>Questions</th><th>Attempts</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody id="quiz-list"><tr><td colspan="6" class="admin-table-state">Loading quizzes...</td></tr></tbody>
+  </table></div>
+</div>
+
+<dialog id="quiz-dialog" class="admin-dialog"><form method="dialog" id="quiz-form" class="admin-form">
+  <div class="admin-dialog-header"><h2 id="quiz-dialog-title">New Quiz</h2><button type="button" class="admin-icon-button" id="close-quiz-dialog" aria-label="Close">&times;</button></div>
+  <input type="hidden" id="quiz-id">
+  <label>Course<select id="quiz-course" name="course_id" required></select></label>
+  <label>Title<input id="quiz-title" name="title" required maxlength="255"></label>
+  <label>Description<textarea id="quiz-description" name="description" rows="3"></textarea></label>
+  <div class="admin-form-grid"><label>Passing score<input value="49% (fixed)" readonly></label><label>Status<select id="quiz-status" name="status"><option>Draft</option><option>Published</option></select></label></div>
+  <div class="admin-dialog-actions"><button type="button" class="admin-btn" id="cancel-quiz-dialog">Cancel</button><button type="submit" class="admin-btn admin-btn-primary">Save Quiz</button></div>
+</form></dialog>
+
+<dialog id="results-dialog" class="admin-dialog admin-results-dialog"><div class="admin-form">
+  <div class="admin-dialog-header"><div><h2 id="results-title">Quiz results</h2><p id="results-summary" class="admin-text-muted"></p></div><button type="button" class="admin-icon-button" id="close-results-dialog" aria-label="Close">&times;</button></div>
+  <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Student</th><th>Score</th><th>Result</th><th>Completed</th></tr></thead><tbody id="results-list"></tbody></table></div>
+</div></dialog>
+
+<dialog id="question-dialog" class="admin-dialog"><form method="dialog" id="question-form" class="admin-form">
+  <div class="admin-dialog-header"><h2 id="question-dialog-title">Add Question</h2><button type="button" class="admin-icon-button" id="close-question-dialog" aria-label="Close">&times;</button></div>
+  <input type="hidden" id="question-quiz-id">
+  <input type="hidden" id="question-id">
+  <label>Question<textarea id="question-text" name="question_text" rows="3" required></textarea></label>
+  <div class="admin-form-grid"><label>Option A<input name="option_a" required></label><label>Option B<input name="option_b" required></label><label>Option C<input name="option_c"></label><label>Option D<input name="option_d"></label></div>
+  <label>Correct answer<select name="correct_answer"><option>A</option><option>B</option><option>C</option><option>D</option></select></label>
+  <div class="admin-dialog-actions"><button type="button" class="admin-btn" id="cancel-question-dialog">Cancel</button><button type="submit" class="admin-btn admin-btn-primary">Save Question</button></div>
+</form></dialog>
+{% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/admin-quizzes.js') }}"></script>{% endblock %}

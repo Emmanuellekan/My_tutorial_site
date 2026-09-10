@@ -35,8 +35,15 @@
         <nav class="nav-menu" aria-label="Primary navigation">
           {% if current_user.is_authenticated %}
             <a href="{{ url_for('main.index') }}" class="{% if request.endpoint == 'main.index' %}is-active{% endif %}">Home</a>
-            <a href="{{ url_for('main.courses') }}" class="{% if request.endpoint == 'main.courses' %}is-active{% endif %}">Courses</a>
-            <a href="{{ url_for('main.courses') }}#learning-paths">Paths</a>
+            {% if current_user.is_admin() %}
+              <a href="{{ url_for('admin.dashboard') }}" class="{% if request.endpoint == 'admin.dashboard' %}is-active{% endif %}">Admin Dashboard</a>
+            {% else %}
+              <a href="{{ url_for('main.student_dashboard') }}" class="{% if request.endpoint == 'main.student_dashboard' %}is-active{% endif %}">Dashboard</a>
+              <a href="{{ url_for('main.courses') }}" class="{% if request.endpoint == 'main.courses' %}is-active{% endif %}">Courses</a>
+              <a href="{{ url_for('main.courses') }}#learning-paths">Paths</a>
+              <a href="{{ url_for('main.notifications') }}">Notifications</a>
+              <a href="{{ url_for('main.student_live_classes') }}">Live Classes</a>
+            {% endif %}
             <a href="#contact">Contact</a>
             <a href="{{ url_for('main.logout') }}" class="{% if request.endpoint == 'main.logout' %}is-active{% endif %}">Logout</a>
           {% else %}
@@ -55,7 +62,11 @@
               {% endif %}
             </a>
           {% endif %}
-          <a class="btn btn-sm" href="{{ url_for('main.signup') }}">Get Started</a>
+          {% if current_user.is_authenticated and not current_user.is_admin() %}
+            <a class="btn btn-sm" href="{{ url_for('main.student_dashboard') }}">Dashboard</a>
+          {% else %}
+            <a class="btn btn-sm" href="{{ url_for('main.signup') }}">Get Started</a>
+          {% endif %}
           <button class="theme-toggle" type="button" aria-label="Change theme" aria-pressed="false">
             <span class="theme-switch" aria-hidden="true">
               <span class="theme-switch-thumb"></span>

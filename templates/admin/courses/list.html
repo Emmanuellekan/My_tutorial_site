@@ -1,0 +1,64 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Courses - DevRise Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div class="admin-page-title">
+    <h1>Courses</h1>
+    <p>Manage all courses on your platform.</p>
+  </div>
+  <div class="admin-page-actions">
+    <button type="button" class="admin-btn admin-btn-primary" id="new-course-button">New Course</button>
+  </div>
+</div>
+
+<div class="admin-section">
+  <div class="admin-section-header">
+    <h2>Course List</h2>
+    <label class="admin-filter-label" for="course-status-filter">
+      Status
+      <select id="course-status-filter" class="admin-form-select">
+        <option value="">All</option>
+        <option value="Draft">Draft</option>
+        <option value="Published">Published</option>
+      </select>
+    </label>
+  </div>
+  <div id="course-feedback" class="admin-inline-feedback" role="status" aria-live="polite"></div>
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr><th>Title</th><th>Category</th><th>Level</th><th>Lessons</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="course-list"><tr><td colspan="6" class="admin-table-state">Loading courses...</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<dialog id="course-dialog" class="admin-dialog">
+  <form method="dialog" id="course-form" class="admin-form">
+    <div class="admin-dialog-header">
+      <h2 id="course-dialog-title">New Course</h2>
+      <button type="button" class="admin-icon-button" id="close-course-dialog" aria-label="Close">&times;</button>
+    </div>
+    <input type="hidden" id="course-id">
+    <label>Title<input id="course-title" name="title" required maxlength="255"></label>
+    <label>Description<textarea id="course-description" name="description" rows="4" required></textarea></label>
+    <div class="admin-form-grid">
+      <label>Category<input id="course-category" name="category" value="General" maxlength="100"></label>
+      <label>Level<select id="course-level" name="level"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></label>
+    </div>
+    <label>Thumbnail URL<input id="course-thumbnail" name="thumbnail" type="url" maxlength="255"></label>
+    <label>Status<select id="course-status" name="status"><option>Draft</option><option>Published</option></select></label>
+    <div class="admin-dialog-actions">
+      <button type="button" class="admin-btn" id="cancel-course-dialog">Cancel</button>
+      <button type="submit" class="admin-btn admin-btn-primary">Save Course</button>
+    </div>
+  </form>
+</dialog>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin-courses.js') }}"></script>
+{% endblock %}

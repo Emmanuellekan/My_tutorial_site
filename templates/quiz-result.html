@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block title %}DevRise | Quiz Result{% endblock %}
+{% block content %}<section class="page-hero"><div class="container"><span class="eyebrow">Quiz complete</span><h1>{{ quiz.title }}</h1><p>You scored {{ score }}%. {% if passed %}You passed this quiz.{% else %}Review the lessons and try again.{% endif %}</p><a class="btn" href="{{ url_for('main.student_dashboard') }}">Back to dashboard</a></div></section>{% endblock %}

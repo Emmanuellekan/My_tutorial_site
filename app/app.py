@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from flask import Flask
 from flask_login import LoginManager
@@ -33,6 +34,32 @@ def ensure_user_schema():
             text("ALTER TABLE user ADD COLUMN profile_image VARCHAR(255) NOT NULL DEFAULT ''")
         )
 
+    if 'role' not in columns:
+        db.session.execute(
+            text("ALTER TABLE user ADD COLUMN role VARCHAR(20) NOT NULL DEFAULT 'student'")
+        )
+
+    if 'created_at' not in columns:
+        created_at = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+        db.session.execute(
+            text(
+                "ALTER TABLE user ADD COLUMN created_at DATETIME "
+                f"NOT NULL DEFAULT '{created_at}'"
+            )
+        )
+
+    quiz_attempt_columns = {
+        column['name'] for column in inspector.get_columns('quiz_attempt')
+    }
+    if 'answers_json' not in quiz_attempt_columns:
+        db.session.execute(
+            text("ALTER TABLE quiz_attempt ADD COLUMN answers_json TEXT NOT NULL DEFAULT '{}'")
+        )
+
+    db.session.execute(
+        text("UPDATE quiz_attempt SET passed = CASE WHEN score >= 49 THEN 1 ELSE 0 END")
+    )
+
     db.session.commit()
 
 
@@ -44,6 +71,8 @@ def create_app():
     )
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devdb.db'
+    app.config['FOUNDER_EMAIL'] = os.getenv('FOUNDER_EMAIL', 'emmanuellekan30@gmail.com').strip().lower()
+    app.config['DEFAULT_SUPPORT_WHATSAPP'] = '2348106775065'
     app.config['PROFILE_IMAGE_UPLOAD_FOLDER'] = os.path.join(
         app.static_folder,
         'uploads',
@@ -55,8 +84,23 @@ def create_app():
 
     db.init_app(app)
 
+    @app.context_processor
+    def inject_platform_settings():
+        from .model import PlatformSetting
+
+        values = {
+            setting.key: setting.value
+            for setting in PlatformSetting.query.all()
+        }
+        return {
+            'platform_settings': values,
+            'support_whatsapp': values.get(
+                'support_whatsapp', app.config['DEFAULT_SUPPORT_WHATSAPP']
+            ),
+        }
+
     login_manager = LoginManager()
-    login_manager.login_view = 'main.signup'
+    login_manager.login_view = 'main.login'
     login_manager.init_app(app)
 
     from .model import User

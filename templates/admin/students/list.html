@@ -1,0 +1,27 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Students - DevRise Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div class="admin-page-title">
+    <h1>Students</h1>
+    <p>Manage and monitor all students on your platform.</p>
+  </div>
+</div>
+
+<div class="admin-section">
+  <div class="admin-section-header">
+    <h2>Student List</h2>
+  </div>
+  <div id="student-feedback" class="admin-inline-feedback" role="status" aria-live="polite"></div>
+  <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Student</th><th>Email</th><th>Courses</th><th>Quiz attempts</th><th>Joined</th><th>Actions</th></tr></thead><tbody id="student-list"><tr><td colspan="6" class="admin-table-state">Loading students...</td></tr></tbody></table></div>
+</div>
+<dialog id="student-dialog" class="admin-dialog admin-results-dialog"><div class="admin-form">
+  <div class="admin-dialog-header"><div><h2 id="student-dialog-title">Student details</h2><p id="student-dialog-meta" class="admin-text-muted"></p></div><button type="button" class="admin-icon-button" id="close-student-dialog" aria-label="Close">&times;</button></div>
+  <div id="student-summary" class="admin-detail-summary"></div>
+  <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Course</th><th>Lessons</th><th>Progress</th><th>Completed</th></tr></thead><tbody id="student-progress-list"></tbody></table></div>
+</div></dialog>
+{% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/admin-students.js') }}"></script>{% endblock %}

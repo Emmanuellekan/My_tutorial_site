@@ -1042,6 +1042,61 @@ body.light-theme .choice-pill:has(input:checked) {
   font-size: 1.35rem;
 }
 
+.student-progress {
+  height: 8px;
+  margin: 1rem 0 0.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--line);
+}
+
+.student-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.quiz-form {
+  display: grid;
+  gap: 1rem;
+  max-width: 760px;
+}
+
+.quiz-question {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.quiz-question legend {
+  padding: 0 0.25rem;
+  font-weight: 700;
+}
+
+.quiz-question label {
+  padding: 0.5rem;
+}
+
+.quiz-review-question {
+  border-left: 4px solid var(--line);
+}
+
+.quiz-review-question.is-correct {
+  border-left-color: #16803c;
+}
+
+.quiz-review-question.is-incorrect {
+  border-left-color: #c0392b;
+}
+
+.quiz-review-question h2 {
+  font-size: 1.1rem;
+}
+
+.quiz-review-status {
+  font-weight: 700;
+}
+
 .cta-banner {
   display: flex;
   align-items: center;

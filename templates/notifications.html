@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}DevRise | Notifications{% endblock %}
+
+{% block content %}
+<section class="page-hero"><div class="container"><span class="eyebrow">Your inbox</span><h1>Notifications</h1><p>Updates and announcements from DevRise.</p></div></section>
+<section class="section"><div class="container"><div class="stack-list">
+  {% for notification in notifications %}
+    <article class="card step-card{% if not notification.read_at %} notification-unread{% endif %}"><span class="pill">{% if notification.read_at %}Read{% else %}New{% endif %}</span><h2>{{ notification.title }}</h2><p>{{ notification.message }}</p><small>{{ notification.created_at.strftime('%b %d, %Y at %H:%M') }}</small>{% if not notification.read_at %}<form method="post" action="{{ url_for('main.mark_notification_read', notification_id=notification.id) }}"><button class="btn btn-sm" type="submit">Mark as read</button></form>{% endif %}</article>
+  {% else %}
+    <p>No notifications yet.</p>
+  {% endfor %}
+</div></div></section>
+{% endblock %}
