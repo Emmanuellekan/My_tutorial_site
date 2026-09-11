@@ -70,11 +70,26 @@ def create_app():
         static_folder='../static'
     )
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devdb.db'
+    is_vercel = bool(os.getenv('VERCEL'))
+    database_url = os.getenv('DATABASE_URL')
+    if database_url:
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace(
+            'postgres://', 'postgresql://', 1
+        )
+        if app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgresql://'):
+            app.config['SQLALCHEMY_DATABASE_URI'] = app.config[
+                'SQLALCHEMY_DATABASE_URI'
+            ].replace('postgresql://', 'postgresql+psycopg://', 1)
+    elif is_vercel:
+        # Vercel's deployed filesystem is read-only; /tmp is ephemeral.
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/devdb.db'
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devdb.db'
+
     app.config['FOUNDER_EMAIL'] = os.getenv('FOUNDER_EMAIL', 'emmanuellekan30@gmail.com').strip().lower()
     app.config['DEFAULT_SUPPORT_WHATSAPP'] = '2348106775065'
     app.config['PROFILE_IMAGE_UPLOAD_FOLDER'] = os.path.join(
-        app.static_folder,
+        '/tmp' if is_vercel else app.static_folder,
         'uploads',
         'profile_images'
     )
@@ -113,7 +128,8 @@ def create_app():
 
     with app.app_context():
         db.create_all()
-        ensure_user_schema()
+        if not is_vercel:
+            ensure_user_schema()
 
 
     migrate = Migrate(app, db)
