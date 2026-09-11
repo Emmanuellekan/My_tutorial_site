@@ -70,7 +70,10 @@ def create_app():
         static_folder='../static'
     )
 
-    is_vercel = bool(os.getenv('VERCEL'))
+    is_vercel = any(
+        os.getenv(name)
+        for name in ('VERCEL', 'VERCEL_ENV', 'VERCEL_URL', 'AWS_LAMBDA_FUNCTION_VERSION')
+    )
     database_url = os.getenv('DATABASE_URL')
     if database_url:
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace(
@@ -128,7 +131,7 @@ def create_app():
 
     with app.app_context():
         db.create_all()
-        if not is_vercel:
+        if os.getenv('RUN_LOCAL_DB_MIGRATION') == '1':
             ensure_user_schema()
 
 
