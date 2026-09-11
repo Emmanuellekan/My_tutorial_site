@@ -324,7 +324,7 @@ def register_app(app, db):
             db.session.commit()
 
             login_user(new_user)
-            return auth_success('Account created successfully.', 'main.login')
+            return auth_success('Account created successfully.', 'main.index')
 
         return render_template('signup.html', user=current_user)
 

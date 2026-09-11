@@ -74,7 +74,11 @@ def create_app():
         os.getenv(name)
         for name in ('VERCEL', 'VERCEL_ENV', 'VERCEL_URL', 'AWS_LAMBDA_FUNCTION_VERSION')
     )
-    database_url = os.getenv('DATABASE_URL')
+    database_url = os.getenv('DATABASE_URL', '').strip()
+    if is_vercel and not database_url:
+        raise RuntimeError(
+            'DATABASE_URL must be configured in Vercel. SQLite cannot persist users on Vercel.'
+        )
     if database_url:
         app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace(
             'postgres://', 'postgresql://', 1
@@ -96,7 +100,10 @@ def create_app():
         'uploads',
         'profile_images'
     )
-    app.secret_key = 'devsecretkey'
+    app.secret_key = os.getenv('SECRET_KEY', 'devsecretkey')
+    app.config['SESSION_COOKIE_SECURE'] = is_vercel
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
     os.makedirs(app.config['PROFILE_IMAGE_UPLOAD_FOLDER'], exist_ok=True)
 
