@@ -6,9 +6,48 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy import inspect, text
+from sqlalchemy.engine import make_url
+from sqlalchemy.exc import ArgumentError
 
 
 db = SQLAlchemy()
+
+
+def get_database_url(is_vercel):
+    database_url = next(
+        (
+            os.getenv(name, '').strip().strip('"').strip("'")
+            for name in (
+                'DATABASE_URL',
+                'POSTGRES_URL',
+                'POSTGRES_PRISMA_URL',
+                'POSTGRES_URL_NON_POOLING',
+            )
+            if os.getenv(name, '').strip()
+        ),
+        '',
+    )
+
+    if not database_url:
+        if is_vercel:
+            raise RuntimeError(
+                'Set DATABASE_URL in Vercel to a valid PostgreSQL connection URL.'
+            )
+        return 'sqlite:///devdb.db'
+
+    normalized_url = database_url.replace('postgres://', 'postgresql://', 1)
+    try:
+        parsed_url = make_url(normalized_url)
+    except ArgumentError as error:
+        raise RuntimeError(
+            'DATABASE_URL must be a complete URL such as '
+            'postgresql://user:password@host/database?sslmode=require.'
+        ) from error
+
+    if parsed_url.drivername in ('postgres', 'postgresql'):
+        parsed_url = parsed_url.set(drivername='postgresql+psycopg')
+
+    return str(parsed_url)
 
 
 def ensure_user_schema():
@@ -74,24 +113,7 @@ def create_app():
         os.getenv(name)
         for name in ('VERCEL', 'VERCEL_ENV', 'VERCEL_URL', 'AWS_LAMBDA_FUNCTION_VERSION')
     )
-    database_url = os.getenv('DATABASE_URL', '').strip()
-    if is_vercel and not database_url:
-        raise RuntimeError(
-            'DATABASE_URL must be configured in Vercel. SQLite cannot persist users on Vercel.'
-        )
-    if database_url:
-        app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace(
-            'postgres://', 'postgresql://', 1
-        )
-        if app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgresql://'):
-            app.config['SQLALCHEMY_DATABASE_URI'] = app.config[
-                'SQLALCHEMY_DATABASE_URI'
-            ].replace('postgresql://', 'postgresql+psycopg://', 1)
-    elif is_vercel:
-        # Vercel's deployed filesystem is read-only; /tmp is ephemeral.
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/devdb.db'
-    else:
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///devdb.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = get_database_url(is_vercel)
 
     app.config['FOUNDER_EMAIL'] = os.getenv('FOUNDER_EMAIL', 'emmanuellekan30@gmail.com').strip().lower()
     app.config['DEFAULT_SUPPORT_WHATSAPP'] = '2348106775065'
