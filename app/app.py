@@ -131,8 +131,6 @@ def create_app():
 
     with app.app_context():
         db.create_all()
-        if os.getenv('RUN_LOCAL_DB_MIGRATION') == '1':
-            ensure_user_schema()
 
 
     migrate = Migrate(app, db)
