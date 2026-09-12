@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Feedback - DevRise Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div class="admin-page-title">
+    <h1>Feedback</h1>
+    <p>Review feedback from students.</p>
+  </div>
+</div>
+
+<div class="admin-section">
+  <div class="admin-section-header">
+    <h2>Student Feedback</h2>
+  </div>
+  <div id="feedback-feedback" class="admin-inline-feedback" role="status" aria-live="polite"></div>
+  <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>From</th><th>Email</th><th>Message</th><th>Status</th><th>Received</th><th>Actions</th></tr></thead><tbody id="feedback-list"><tr><td colspan="6" class="admin-table-state">Loading feedback...</td></tr></tbody></table></div>
+</div>
+{% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/admin-feedback.js') }}"></script>{% endblock %}

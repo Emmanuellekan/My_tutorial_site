@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}DevRise | Live Classes{% endblock %}
+
+{% block content %}
+<section class="page-hero"><div class="container"><span class="eyebrow">Learn together</span><h1>Live classes</h1><p>Join upcoming sessions or catch up with recordings from completed classes.</p></div></section>
+<section class="section"><div class="container"><div class="section-heading"><span class="eyebrow">Upcoming</span><h2>Classes you can join</h2></div><div class="grid grid-3">
+  {% for live_class in upcoming_classes %}<article class="card course-card"><span class="pill">{{ live_class.status }}</span><h3>{{ live_class.title }}</h3><p>{{ live_class.course.title }}</p><p>{{ live_class.scheduled_date.strftime('%b %d, %Y at %H:%M') }} - {{ live_class.end_time.strftime('%H:%M') }}</p><a class="btn" href="{{ live_class.meeting_link }}" target="_blank" rel="noopener">Join {{ live_class.platform }}</a></article>{% else %}<p>No upcoming live classes are scheduled.</p>{% endfor %}
+</div></div></section>
+<section class="section section-muted"><div class="container"><div class="section-heading"><span class="eyebrow">Class library</span><h2>Past classes</h2></div><div class="grid grid-3">
+  {% for live_class in past_classes %}<article class="card course-card"><span class="pill">Completed</span><h3>{{ live_class.title }}</h3><p>{{ live_class.course.title }}</p><p>{{ live_class.scheduled_date.strftime('%b %d, %Y') }}</p>{% if live_class.recording_url %}<a class="btn btn-secondary" href="{{ live_class.recording_url }}" target="_blank" rel="noopener">Watch recording</a>{% else %}<small>Recording not available.</small>{% endif %}</article>{% else %}<p>No completed classes yet.</p>{% endfor %}
+</div></div></section>
+{% endblock %}

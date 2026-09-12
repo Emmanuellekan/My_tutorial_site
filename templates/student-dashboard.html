@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}DevRise | Student Dashboard{% endblock %}
+
+{% block content %}
+<section class="page-hero"><div class="container"><span class="eyebrow">Your learning space</span><h1>Welcome back, {{ current_user.fullname }}.</h1><p>Continue your courses, take quizzes, and keep track of your progress.</p></div></section>
+<section class="section"><div class="container">
+  <div class="section-heading"><span class="eyebrow">My courses</span><h2>Continue learning</h2></div>
+  <div class="grid grid-3">
+    {% for item in course_cards %}
+      <article class="card course-card"><span class="pill">{{ item.progress }}% complete</span><h3>{{ item.course.title }}</h3><p>{{ item.course.description }}</p><div class="student-progress"><span style="width: {{ item.progress }}%"></span></div><small>{{ item.completed_lessons }} of {{ item.total_lessons }} published lessons completed</small><a class="btn" href="{{ url_for('main.learn_course', course_id=item.course.id) }}">Open course</a></article>
+    {% else %}<p>No published courses are available yet.</p>{% endfor %}
+  </div>
+</div></section>
+<section class="section section-muted"><div class="container split-section">
+  <div><div class="section-heading"><span class="eyebrow">Assess your progress</span><h2>Available quiz results</h2></div>
+    {% for attempt in recent_attempts %}<article class="card step-card"><h3>{{ attempt.quiz.title }}</h3><p>Score: {{ attempt.score }}%{% if attempt.passed %} - Passed{% else %} - Keep practicing{% endif %}</p><small>{{ attempt.completed_at.strftime('%b %d, %Y at %H:%M') }}</small><a class="btn btn-secondary" href="{{ url_for('main.quiz_review', attempt_id=attempt.id) }}">Review attempt</a></article>{% else %}<p>You have not taken a quiz yet.</p>{% endfor %}
+    {% for quiz in current_user_quizzes %}<a class="btn" href="{{ url_for('main.take_quiz', quiz_id=quiz.id) }}">Take {{ quiz.title }}</a>{% endfor %}
+  </div>
+  <div><div class="section-heading"><span class="eyebrow">Live learning</span><h2>Upcoming classes</h2></div>
+    {% for live_class in upcoming_classes %}<article class="card step-card"><h3>{{ live_class.title }}</h3><p>{{ live_class.scheduled_date.strftime('%b %d, %Y at %H:%M') }}</p><a class="btn btn-secondary" href="{{ live_class.meeting_link }}" target="_blank" rel="noopener">Join {{ live_class.platform }}</a></article>{% else %}<p>No upcoming live classes.</p>{% endfor %}
+  </div>
+</div></section>
+{% endblock %}
