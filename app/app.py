@@ -46,6 +46,8 @@ def get_database_url(is_vercel):
 
     if parsed_url.drivername in ('postgres', 'postgresql'):
         parsed_url = parsed_url.set(drivername='postgresql+psycopg')
+        if 'sslmode' not in parsed_url.query:
+            parsed_url = parsed_url.update_query_dict({'sslmode': 'require'})
 
     return str(parsed_url)
 
@@ -113,7 +115,14 @@ def create_app():
         os.getenv(name)
         for name in ('VERCEL', 'VERCEL_ENV', 'VERCEL_URL', 'AWS_LAMBDA_FUNCTION_VERSION')
     )
-    app.config['SQLALCHEMY_DATABASE_URI'] = get_database_url(is_vercel)
+    database_url = get_database_url(is_vercel)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_pre_ping': True}
+
+    if 'pgbouncer=true' in database_url.lower():
+        app.config['SQLALCHEMY_ENGINE_OPTIONS']['connect_args'] = {
+            'prepare_threshold': 0,
+        }
 
     app.config['FOUNDER_EMAIL'] = os.getenv('FOUNDER_EMAIL', 'emmanuellekan30@gmail.com').strip().lower()
     app.config['DEFAULT_SUPPORT_WHATSAPP'] = '2348106775065'
