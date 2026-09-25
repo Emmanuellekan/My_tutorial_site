@@ -695,6 +695,21 @@ def create_admin_api_blueprint():
         except Exception as e:
             return jsonify({'ok': False, 'message': str(e)}), 500
 
+    @admin_api.route('/students/<int:student_id>', methods=['DELETE'])
+    @admin_required
+    def delete_student(student_id):
+        """Delete a student account and its related learning records."""
+        try:
+            student = User.query.filter_by(id=student_id, role='student').first()
+            if student is None:
+                return jsonify({'ok': False, 'message': 'Student account not found.'}), 404
+            db.session.delete(student)
+            db.session.commit()
+            return jsonify({'ok': True, 'message': 'Student account deleted successfully'}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'ok': False, 'message': str(e)}), 500
+
     # ==================== Live Classes ====================
 
     @admin_api.route('/live-classes', methods=['GET'])

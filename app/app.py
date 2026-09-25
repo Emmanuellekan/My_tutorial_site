@@ -33,7 +33,13 @@ def get_database_url(is_vercel):
             raise RuntimeError(
                 'Set DATABASE_URL in Vercel to a valid PostgreSQL connection URL.'
             )
-        return 'sqlite:///devdb.db'
+        sqlite_path = os.getenv(
+            'SQLITE_DATABASE_PATH',
+            os.path.join(os.path.dirname(os.path.dirname(__file__)), 'instance', 'devdb.db'),
+        )
+        sqlite_path = os.path.abspath(sqlite_path)
+        os.makedirs(os.path.dirname(sqlite_path), exist_ok=True)
+        return f'sqlite:///{sqlite_path}'
 
     normalized_url = database_url.replace('postgres://', 'postgresql://', 1)
     try:

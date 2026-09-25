@@ -161,6 +161,26 @@
   border-left-color: var(--admin-primary);
 }
 
+.admin-dashboard-link {
+  margin: 0.25rem 0.75rem;
+  border: 1px solid transparent;
+  border-left-width: 3px;
+  border-radius: var(--admin-radius);
+}
+
+.admin-dashboard-link.is-active {
+  background: var(--admin-primary);
+  color: var(--admin-white);
+  border-color: var(--admin-primary);
+  box-shadow: var(--admin-shadow-md);
+}
+
+.admin-dashboard-link.is-active:hover {
+  background: var(--admin-primary-dark);
+  color: var(--admin-white);
+  border-color: var(--admin-primary-dark);
+}
+
 .admin-nav-icon {
   width: 20px;
   height: 20px;

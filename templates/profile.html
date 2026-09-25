@@ -4,7 +4,7 @@
 
 {% block content %}
 <section class="auth-page">
-  <div class="container profile-layout">
+  <div class="container profile-settings-layout">
     <div class="card profile-card reveal">
       <div class="profile-avatar">
         {% if current_user.profile_image %}
@@ -14,11 +14,9 @@
         {% endif %}
       </div>
 
-      <div>
-        <span class="pill">Your Profile</span>
-        <h1>{{ current_user.fullname }}</h1>
-        <p>{{ current_user.email }}</p>
-      </div>
+      <span class="pill">Your Profile</span>
+      <h1>{{ current_user.fullname }}</h1>
+      <p>{{ current_user.email }}</p>
 
       <div class="profile-details">
         <div>
@@ -29,6 +27,51 @@
           <span>Gender</span>
           <strong>{{ current_user.gender }}</strong>
         </div>
+      </div>
+    </div>
+
+    <div class="profile-forms">
+      <div class="card profile-form-card reveal">
+        <span class="eyebrow">Account details</span>
+        <h2>Update your details</h2>
+        <form class="auth-form" method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="action" value="update-details">
+          <label class="form-field"><span>Full Name</span><input type="text" name="fullname" value="{{ current_user.fullname }}" required></label>
+          <label class="form-field"><span>Email Address</span><input type="email" name="email" value="{{ current_user.email }}" required></label>
+          <label class="form-field"><span>Phone Number <small>(optional)</small></span><input type="text" name="phoneNumber" value="{{ current_user.phoneNumber }}"></label>
+          <fieldset class="form-field form-fieldset">
+            <legend>Gender</legend>
+            <div class="choice-group" role="radiogroup" aria-label="Gender">
+              {% for gender in ['male', 'female', 'other'] %}
+                <label class="choice-pill"><input type="radio" name="gender" value="{{ gender }}" {% if current_user.gender|lower == gender %}checked{% endif %}><span>{{ gender|capitalize }}</span></label>
+              {% endfor %}
+            </div>
+          </fieldset>
+          <label class="form-field"><span>Profile Image <small>(JPG, PNG, WEBP, or GIF; max 5 MB)</small></span><input type="file" name="profile_image" accept="image/png,image/jpeg,image/webp,image/gif"></label>
+          <button type="submit" class="btn">Save Details</button>
+        </form>
+      </div>
+
+      <div class="card profile-form-card reveal">
+        <span class="eyebrow">Security</span>
+        <h2>Change password</h2>
+        <form class="auth-form" method="POST">
+          <input type="hidden" name="action" value="change-password">
+          <label class="form-field"><span>Current Password</span><input type="password" name="current_password" required></label>
+          <label class="form-field"><span>New Password</span><input type="password" name="new_password" minlength="6" required></label>
+          <label class="form-field"><span>Confirm New Password</span><input type="password" name="confirm_password" minlength="6" required></label>
+          <button type="submit" class="btn btn-secondary">Change Password</button>
+        </form>
+      </div>
+
+      <div class="card profile-form-card profile-danger-card reveal">
+        <span class="eyebrow">Danger zone</span>
+        <h2>Delete account</h2>
+        <p>This permanently deletes your account, progress, quiz attempts, and notifications.</p>
+        <form class="auth-form" method="POST" action="{{ url_for('main.delete_account') }}" onsubmit="return confirm('Delete your account permanently? This cannot be undone.');">
+          <label class="form-field"><span>Confirm with your password</span><input type="password" name="password" autocomplete="current-password" required></label>
+          <button type="submit" class="btn btn-danger">Delete My Account</button>
+        </form>
       </div>
     </div>
   </div>

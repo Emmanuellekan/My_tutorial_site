@@ -1,4 +1,3 @@
-            <a href="https://wa.me/{{ support_whatsapp }}" class="admin-nav-link" target="_blank" rel="noopener">
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,7 +33,7 @@
       <nav class="admin-nav" aria-label="Admin navigation">
         <ul class="admin-nav-list">
           <li class="admin-nav-item">
-            <a href="{{ url_for('admin.dashboard') }}" class="admin-nav-link {% if request.endpoint == 'admin.dashboard' %}is-active{% endif %}">
+            <a href="{{ url_for('admin.dashboard') }}" class="admin-nav-link admin-dashboard-link {% if request.endpoint == 'admin.dashboard' %}is-active{% endif %}">
               <svg class="admin-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="12 3 20 7.46 20 16.89 12 21 4 16.89 4 7.46 12 3"></polyline>
                 <line x1="12" y1="12" x2="20" y2="7.46"></line>

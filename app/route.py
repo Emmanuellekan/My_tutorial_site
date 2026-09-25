@@ -6,12 +6,13 @@ from uuid import uuid4
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from pydantic import ValidationError
+from sqlalchemy.exc import OperationalError
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
 from .app import db
 from .model import Course, LiveClass, Lesson, Notification, Quiz, QuizAttempt, QuizQuestion, StudentProgress, User
-from .validation import LoginData, SignupData, first_validation_error
+from .validation import LoginData, PasswordChangeData, ProfileData, SignupData, first_validation_error
 from .admin_routes import create_admin_blueprint
 from .admin_api import create_admin_api_blueprint
 
@@ -52,11 +53,33 @@ def register_app(app, db):
         if not image_file or not image_file.filename:
             return ''
 
-        extension = image_file.filename.rsplit('.', 1)[-1].lower()
-        if '.' not in image_file.filename or extension not in allowed_image_extensions:
+        if '.' not in image_file.filename:
             return None
 
-        filename = secure_filename(f'{uuid4().hex}.{extension}')
+        image_file.stream.seek(0, os.SEEK_END)
+        file_size = image_file.stream.tell()
+        image_file.stream.seek(0)
+        if file_size > 5 * 1024 * 1024:
+            return None
+
+        file_header = image_file.stream.read(12)
+        image_file.stream.seek(0)
+        signatures = (
+            (b'\xff\xd8\xff', 'jpg'),
+            (b'\x89PNG\r\n\x1a\n', 'png'),
+            (b'GIF87a', 'gif'),
+            (b'GIF89a', 'gif'),
+        )
+        detected_extension = next(
+            (extension for signature, extension in signatures if file_header.startswith(signature)),
+            None,
+        )
+        if file_header[:4] == b'RIFF' and file_header[8:12] == b'WEBP':
+            detected_extension = 'webp'
+        if detected_extension not in allowed_image_extensions:
+            return None
+
+        filename = secure_filename(f'{uuid4().hex}.{detected_extension}')
         image_file.save(os.path.join(app.config['PROFILE_IMAGE_UPLOAD_FOLDER'], filename))
         return f'uploads/profile_images/{filename}'
 
@@ -70,9 +93,6 @@ def register_app(app, db):
     @main.route('/dashboard')
     @login_required
     def student_dashboard():
-        if current_user.is_admin():
-            return redirect(url_for('admin.dashboard'))
-
         courses = Course.query.filter_by(status='Published').order_by(Course.created_at.desc()).all()
         course_cards = []
         for course in courses:
@@ -108,10 +128,94 @@ def register_app(app, db):
         )
 
 
-    @main.route('/profile')
+    @main.route('/profile', methods=['GET', 'POST'])
     @login_required
     def profile():
+        if request.method == 'POST':
+            action = request.form.get('action')
+            if action == 'update-details':
+                try:
+                    profile_data = ProfileData(**request.form)
+                except ValidationError as error:
+                    flash(first_validation_error(error), 'error')
+                    return redirect(url_for('main.profile'))
+
+                phone_number = profile_data.phoneNumber or current_user.phoneNumber
+                existing_email = User.query.filter(
+                    User.email == profile_data.email,
+                    User.id != current_user.id,
+                ).first()
+                if existing_email:
+                    flash('Email already exists.', 'error')
+                    return redirect(url_for('main.profile'))
+
+                if phone_number != current_user.phoneNumber:
+                    existing_phone = User.query.filter(
+                        User.phoneNumber == phone_number,
+                        User.id != current_user.id,
+                    ).first()
+                    if existing_phone:
+                        flash('Phone number already exists.', 'error')
+                        return redirect(url_for('main.profile'))
+
+                profile_image = save_profile_image(request.files.get('profile_image'))
+                if profile_image is None:
+                    flash('Please upload a valid image file.', 'error')
+                    return redirect(url_for('main.profile'))
+
+                current_user.fullname = profile_data.fullname
+                current_user.email = profile_data.email
+                current_user.phoneNumber = phone_number
+                current_user.gender = profile_data.gender.capitalize()
+                if profile_image:
+                    current_user.profile_image = profile_image
+                try:
+                    db.session.commit()
+                except OperationalError:
+                    db.session.rollback()
+                    flash('Your profile could not be saved because the database is read-only.', 'error')
+                    return redirect(url_for('main.profile'))
+                flash('Your profile details have been updated.', 'success')
+                return redirect(url_for('main.profile'))
+
+            if action == 'change-password':
+                try:
+                    password_data = PasswordChangeData(**request.form)
+                except ValidationError as error:
+                    flash(first_validation_error(error), 'error')
+                    return redirect(url_for('main.profile'))
+
+                if not check_password_hash(current_user.password, password_data.current_password):
+                    flash('Your current password is incorrect.', 'error')
+                    return redirect(url_for('main.profile'))
+
+                current_user.password = generate_password_hash(password_data.new_password)
+                try:
+                    db.session.commit()
+                except OperationalError:
+                    db.session.rollback()
+                    flash('Your password could not be changed because the database is read-only.', 'error')
+                    return redirect(url_for('main.profile'))
+                flash('Your password has been changed.', 'success')
+                return redirect(url_for('main.profile'))
+
         return render_template('profile.html')
+
+
+    @main.route('/account/delete', methods=['POST'])
+    @login_required
+    def delete_account():
+        password = request.form.get('password', '')
+        if not check_password_hash(current_user.password, password):
+            flash('Your password is incorrect. Your account was not deleted.', 'error')
+            return redirect(url_for('main.profile'))
+
+        user = current_user._get_current_object()
+        logout_user()
+        db.session.delete(user)
+        db.session.commit()
+        flash('Your account has been deleted.', 'success')
+        return redirect(url_for('main.login'))
 
 
     @main.route('/notifications')
@@ -360,6 +464,37 @@ def register_app(app, db):
             return auth_success('Login successful.', 'main.index')
 
         return render_template('login.html', user=current_user)
+
+
+    @main.route('/forgot-password', methods=['GET', 'POST'])
+    def forgot_password():
+        if request.method == 'POST':
+            email = request.form.get('email', '').strip().lower()
+            phone_number = request.form.get('phoneNumber', '').strip()
+            new_password = request.form.get('new_password', '')
+            confirm_password = request.form.get('confirm_password', '')
+
+            if not email or not phone_number:
+                flash('Enter the email and phone number on your account.', 'error')
+                return redirect(url_for('main.forgot_password'))
+            if len(new_password) < 6:
+                flash('New password must be at least 6 characters.', 'error')
+                return redirect(url_for('main.forgot_password'))
+            if new_password != confirm_password:
+                flash('New passwords do not match.', 'error')
+                return redirect(url_for('main.forgot_password'))
+
+            user = User.query.filter_by(email=email, phoneNumber=phone_number).first()
+            if user is None:
+                flash('The email and phone number do not match an account.', 'error')
+                return redirect(url_for('main.forgot_password'))
+
+            user.password = generate_password_hash(new_password)
+            db.session.commit()
+            flash('Your password has been reset. You can now log in.', 'success')
+            return redirect(url_for('main.login'))
+
+        return render_template('forgot-password.html')
 
 
     @main.route('/logout')
