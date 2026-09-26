@@ -50,12 +50,18 @@ def get_database_url(is_vercel):
             'postgresql://user:password@host/database?sslmode=require.'
         ) from error
 
+    if is_vercel and parsed_url.get_backend_name() not in ('postgres', 'postgresql'):
+        raise RuntimeError(
+            'Vercel requires a hosted PostgreSQL database. Set DATABASE_URL '
+            'to your provider\'s PostgreSQL connection URL.'
+        )
+
     if parsed_url.drivername in ('postgres', 'postgresql'):
         parsed_url = parsed_url.set(drivername='postgresql+psycopg')
         if 'sslmode' not in parsed_url.query:
             parsed_url = parsed_url.update_query_dict({'sslmode': 'require'})
 
-    return str(parsed_url)
+    return parsed_url.render_as_string(hide_password=False)
 
 
 def ensure_user_schema():
@@ -137,7 +143,10 @@ def create_app():
         'uploads',
         'profile_images'
     )
-    app.secret_key = os.getenv('SECRET_KEY', 'devsecretkey')
+    secret_key = os.getenv('SECRET_KEY', '').strip()
+    if is_vercel and not secret_key:
+        raise RuntimeError('Set SECRET_KEY in Vercel to a long, random secret value.')
+    app.secret_key = secret_key or 'devsecretkey'
     app.config['SESSION_COOKIE_SECURE'] = is_vercel
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
