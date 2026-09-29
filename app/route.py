@@ -205,6 +205,10 @@ def register_app(app, db):
     @main.route('/account/delete', methods=['POST'])
     @login_required
     def delete_account():
+        if request.form.get('confirm_delete') != 'yes':
+            flash('Please confirm that you understand account deletion is permanent.', 'error')
+            return redirect(url_for('main.profile'))
+
         password = request.form.get('password', '')
         if not check_password_hash(current_user.password, password):
             flash('Your password is incorrect. Your account was not deleted.', 'error')

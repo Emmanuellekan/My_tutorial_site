@@ -64,15 +64,23 @@
         </form>
       </div>
 
-      <div class="card profile-form-card profile-danger-card reveal">
-        <span class="eyebrow">Danger zone</span>
-        <h2>Delete account</h2>
-        <p>This permanently deletes your account, progress, quiz attempts, and notifications.</p>
-        <form class="auth-form" method="POST" action="{{ url_for('main.delete_account') }}" onsubmit="return confirm('Delete your account permanently? This cannot be undone.');">
-          <label class="form-field"><span>Confirm with your password</span><input type="password" name="password" autocomplete="current-password" required></label>
-          <button type="submit" class="btn btn-danger">Delete My Account</button>
-        </form>
-      </div>
+      <details class="card profile-danger-card profile-danger-disclosure reveal">
+        <summary class="profile-danger-summary">
+          <span class="profile-danger-summary-copy">
+            <span class="eyebrow">Danger zone</span>
+            <strong>Delete account</strong>
+            <span>Account removal options</span>
+          </span>
+        </summary>
+        <div class="profile-danger-content">
+          <p>This permanently deletes your account, progress, quiz attempts, and notifications.</p>
+          <form class="auth-form" method="POST" action="{{ url_for('main.delete_account') }}" onsubmit="return confirm('Delete your account permanently? This cannot be undone.');">
+            <label class="profile-delete-ack"><input type="checkbox" name="confirm_delete" value="yes" required><span>I understand this action is permanent.</span></label>
+            <label class="form-field"><span>Confirm with your password</span><input type="password" name="password" autocomplete="current-password" required></label>
+            <button type="submit" class="btn btn-danger-quiet">Delete account</button>
+          </form>
+        </div>
+      </details>
     </div>
   </div>
 </section>

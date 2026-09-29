@@ -834,7 +834,129 @@ body.light-theme .choice-pill:has(input:checked) {
 }
 
 .profile-danger-card {
+  border-color: rgba(255, 107, 107, 0.16);
+}
+
+.profile-danger-disclosure {
+  padding: 0;
+}
+
+.profile-danger-disclosure[open] {
+  border-color: rgba(255, 107, 107, 0.32);
+}
+
+.profile-danger-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.35rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+.profile-danger-summary::-webkit-details-marker {
+  display: none;
+}
+
+.profile-danger-summary:focus-visible {
+  outline: 2px solid #58a6ff;
+  outline-offset: -3px;
+}
+
+.profile-danger-summary::after {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: 0 0 auto;
+  border-right: 2px solid #92a4ba;
+  border-bottom: 2px solid #92a4ba;
+  content: '';
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.profile-danger-disclosure[open] .profile-danger-summary::after {
+  transform: rotate(225deg);
+}
+
+.profile-danger-summary-copy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.profile-danger-summary-copy strong {
+  color: #e8f1ff;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.profile-danger-summary-copy > span:last-child {
+  color: #92a4ba;
+  font-size: 0.84rem;
+}
+
+.profile-danger-content {
+  padding: 0 1.35rem 1.35rem;
+}
+
+.profile-danger-content > p {
+  color: #a8b7c9;
+  font-size: 0.9rem;
+}
+
+.profile-delete-ack {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  color: #c3cfdd;
+  font-size: 0.9rem;
+}
+
+.profile-delete-ack input {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  margin: 0.15rem 0 0;
+  accent-color: #c75b5b;
+}
+
+.btn-danger-quiet {
+  min-height: 2.5rem;
+  justify-self: start;
+  padding: 0.6rem 1rem;
   border-color: rgba(255, 107, 107, 0.28);
+  background: transparent;
+  color: #f09b9b;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.btn-danger-quiet:hover {
+  transform: none;
+  border-color: rgba(255, 107, 107, 0.5);
+  background: rgba(255, 107, 107, 0.08);
+  color: #ffb4b4;
+}
+
+body.light-theme .profile-danger-summary-copy strong {
+  color: #24364a;
+}
+
+body.light-theme .profile-danger-summary-copy > span:last-child,
+body.light-theme .profile-danger-content > p {
+  color: #596b7e;
+}
+
+body.light-theme .profile-delete-ack {
+  color: #35485d;
+}
+
+body.light-theme .btn-danger-quiet {
+  color: #a33333;
+}
+
+body.light-theme .btn-danger-quiet:hover {
+  color: #842727;
 }
 
 .profile-card {
