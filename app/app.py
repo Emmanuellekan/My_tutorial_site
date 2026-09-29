@@ -184,6 +184,12 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+        founder = User.query.filter(
+            db.func.lower(User.email) == app.config['FOUNDER_EMAIL']
+        ).first()
+        if founder and founder.role != 'admin':
+            founder.role = 'admin'
+            db.session.commit()
 
 
     migrate = Migrate(app, db)

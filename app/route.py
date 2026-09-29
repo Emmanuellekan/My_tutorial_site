@@ -421,7 +421,12 @@ def register_app(app, db):
                 email=signup_data.email,
                 gender=signup_data.gender.capitalize(),
                 profile_image=profile_image,
-                password=generate_password_hash(signup_data.password)
+                password=generate_password_hash(signup_data.password),
+                role=(
+                    'admin'
+                    if signup_data.email == app.config['FOUNDER_EMAIL']
+                    else 'student'
+                ),
             )
 
             db.session.add(new_user)
