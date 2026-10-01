@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}DevRise | {{ course.title }}{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="container"><span class="eyebrow">{{ course.category }} | {{ course.level }}</span><h1>{{ course.title }}</h1><p>{{ course.description }}</p></div></section>
+<section class="section"><div class="container"><div class="section-heading"><span class="eyebrow">Course lessons</span><h2>Learn at your pace</h2></div><div class="stack-list">
+  {% for lesson in lessons %}<article class="card step-card"><span class="pill">Lesson {{ lesson.order }}{% if lesson.id in completed_ids %} | Completed{% endif %}</span><h2>{{ lesson.title }}</h2><p>{{ lesson.content }}</p>{% if lesson.video_url %}<p><a class="btn btn-secondary" href="{{ lesson.video_url }}" target="_blank" rel="noopener">Watch lesson video</a></p>{% endif %}{% if lesson.id not in completed_ids %}<form method="post" action="{{ url_for('main.complete_lesson', lesson_id=lesson.id) }}"><button class="btn" type="submit">Mark lesson complete</button></form>{% endif %}</article>{% else %}<p>No published lessons are available yet.</p>{% endfor %}
+</div>{% if quizzes %}<div class="section-heading"><span class="eyebrow">Check your understanding</span><h2>Course quizzes</h2></div><div class="stack-list">{% for quiz in quizzes %}<article class="card step-card"><h3>{{ quiz.title }}</h3><p>{{ quiz.description }}</p><a class="btn" href="{{ url_for('main.take_quiz', quiz_id=quiz.id) }}">Take quiz</a></article>{% endfor %}</div>{% endif %}</div></section>
+{% endblock %}

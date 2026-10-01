@@ -1,0 +1,58 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Settings - DevRise Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div class="admin-page-title">
+    <h1>Settings</h1>
+    <p>Configure admin account and platform settings.</p>
+  </div>
+</div>
+
+<div class="admin-section">
+  <div class="admin-section-header">
+    <h2>Settings</h2>
+  </div>
+  <form method="post" class="admin-form">
+    <label>Name<input name="fullname" value="{{ current_user.fullname }}" required maxlength="150"></label>
+    <label>Email<input name="email" type="email" value="{{ current_user.email }}" required maxlength="200"></label>
+    <div class="admin-form-grid"><label>Current password<input name="current_password" type="password" autocomplete="current-password"></label><label>New password<input name="new_password" type="password" minlength="8" autocomplete="new-password"></label></div>
+    <div class="admin-dialog-actions"><button class="admin-btn admin-btn-primary" type="submit">Save Settings</button></div>
+  </form>
+</div>
+
+<div class="admin-section">
+  <div class="admin-section-header"><h2>Platform settings</h2></div>
+  <form method="post" class="admin-form">
+    <input type="hidden" name="fullname" value="{{ current_user.fullname }}"><input type="hidden" name="email" value="{{ current_user.email }}">
+    <label>Site name<input name="site_name" value="{{ settings.get('site_name', 'DevRise') }}" maxlength="100"></label>
+    <label>Site description<textarea name="site_description" rows="3">{{ settings.get('site_description', '') }}</textarea></label>
+    <label>Support WhatsApp number<input name="support_whatsapp" value="{{ settings.get('support_whatsapp', config['DEFAULT_SUPPORT_WHATSAPP']) }}" inputmode="numeric" maxlength="20"></label>
+    <div class="admin-dialog-actions"><button class="admin-btn admin-btn-primary" type="submit">Save Platform Settings</button></div>
+  </form>
+</div>
+
+<div class="admin-section">
+  <div class="admin-section-header"><h2>Send student announcement</h2></div>
+  <form id="announcement-form" class="admin-form">
+    <label>Title<input name="title" required maxlength="255"></label>
+    <label>Message<textarea name="message" rows="4" required></textarea></label>
+    <div id="announcement-feedback" class="admin-inline-feedback" role="status"></div>
+    <div class="admin-dialog-actions"><button class="admin-btn admin-btn-primary" type="submit">Send to Students</button></div>
+  </form>
+</div>
+
+<div class="admin-section">
+  <span id="administrator-access"></span>
+  <div class="admin-section-header"><h2>Administrator access</h2></div>
+  {% if current_user.email.lower() == config['FOUNDER_EMAIL'] %}
+    <p>Only the founder account can grant or remove administrator access.</p>
+    <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead><tbody id="managed-users" data-founder-email="{{ config['FOUNDER_EMAIL'] }}"><tr><td colspan="4" class="admin-table-state">Loading users...</td></tr></tbody></table></div>
+  {% else %}
+    <p>Administrator access is managed by the founder.</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/admin-settings.js') }}"></script>{% endblock %}

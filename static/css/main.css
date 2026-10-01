@@ -475,6 +475,18 @@ body.light-theme .theme-toggle {
   background: rgba(88, 166, 255, 0.08);
 }
 
+.btn-danger {
+  border-color: rgba(255, 107, 107, 0.35);
+  background: #ff6b6b;
+  color: #2a0808;
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.18);
+}
+
+.btn-danger:hover {
+  background: #ff8585;
+  color: #2a0808;
+}
+
 body.light-theme .btn-secondary {
   background: rgba(16, 32, 51, 0.03);
   border-color: rgba(16, 32, 51, 0.12);
@@ -488,6 +500,18 @@ body.light-theme .btn-secondary:hover {
 .btn-sm {
   min-height: 2.8rem;
   padding: 0.7rem 1.15rem;
+}
+
+.dashboard-button {
+  border-color: rgba(110, 231, 183, 0.4);
+  background: #6ee7b7;
+  color: #062018;
+  box-shadow: 0 10px 30px rgba(110, 231, 183, 0.2);
+}
+
+.dashboard-button:hover {
+  background: #9af3cd;
+  color: #062018;
 }
 
 .eyebrow {
@@ -793,6 +817,148 @@ body.light-theme .choice-pill:has(input:checked) {
   justify-content: center;
 }
 
+.profile-settings-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.72fr) minmax(0, 1.28fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.profile-forms {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.profile-form-card h2 {
+  margin-bottom: 0.5rem;
+}
+
+.profile-danger-card {
+  border-color: rgba(255, 107, 107, 0.16);
+}
+
+.profile-danger-disclosure {
+  padding: 0;
+}
+
+.profile-danger-disclosure[open] {
+  border-color: rgba(255, 107, 107, 0.32);
+}
+
+.profile-danger-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.35rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+.profile-danger-summary::-webkit-details-marker {
+  display: none;
+}
+
+.profile-danger-summary:focus-visible {
+  outline: 2px solid #58a6ff;
+  outline-offset: -3px;
+}
+
+.profile-danger-summary::after {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: 0 0 auto;
+  border-right: 2px solid #92a4ba;
+  border-bottom: 2px solid #92a4ba;
+  content: '';
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.profile-danger-disclosure[open] .profile-danger-summary::after {
+  transform: rotate(225deg);
+}
+
+.profile-danger-summary-copy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.profile-danger-summary-copy strong {
+  color: #e8f1ff;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.profile-danger-summary-copy > span:last-child {
+  color: #92a4ba;
+  font-size: 0.84rem;
+}
+
+.profile-danger-content {
+  padding: 0 1.35rem 1.35rem;
+}
+
+.profile-danger-content > p {
+  color: #a8b7c9;
+  font-size: 0.9rem;
+}
+
+.profile-delete-ack {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  color: #c3cfdd;
+  font-size: 0.9rem;
+}
+
+.profile-delete-ack input {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  margin: 0.15rem 0 0;
+  accent-color: #c75b5b;
+}
+
+.btn-danger-quiet {
+  min-height: 2.5rem;
+  justify-self: start;
+  padding: 0.6rem 1rem;
+  border-color: rgba(255, 107, 107, 0.28);
+  background: transparent;
+  color: #f09b9b;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.btn-danger-quiet:hover {
+  transform: none;
+  border-color: rgba(255, 107, 107, 0.5);
+  background: rgba(255, 107, 107, 0.08);
+  color: #ffb4b4;
+}
+
+body.light-theme .profile-danger-summary-copy strong {
+  color: #24364a;
+}
+
+body.light-theme .profile-danger-summary-copy > span:last-child,
+body.light-theme .profile-danger-content > p {
+  color: #596b7e;
+}
+
+body.light-theme .profile-delete-ack {
+  color: #35485d;
+}
+
+body.light-theme .btn-danger-quiet {
+  color: #a33333;
+}
+
+body.light-theme .btn-danger-quiet:hover {
+  color: #842727;
+}
+
 .profile-card {
   display: grid;
   justify-items: center;
@@ -826,6 +992,12 @@ body.light-theme .choice-pill:has(input:checked) {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+@media (max-width: 760px) {
+  .profile-settings-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 .profile-details {
@@ -1040,6 +1212,61 @@ body.light-theme .choice-pill:has(input:checked) {
 .step-card h3 {
   margin-bottom: 0.85rem;
   font-size: 1.35rem;
+}
+
+.student-progress {
+  height: 8px;
+  margin: 1rem 0 0.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--line);
+}
+
+.student-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.quiz-form {
+  display: grid;
+  gap: 1rem;
+  max-width: 760px;
+}
+
+.quiz-question {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.quiz-question legend {
+  padding: 0 0.25rem;
+  font-weight: 700;
+}
+
+.quiz-question label {
+  padding: 0.5rem;
+}
+
+.quiz-review-question {
+  border-left: 4px solid var(--line);
+}
+
+.quiz-review-question.is-correct {
+  border-left-color: #16803c;
+}
+
+.quiz-review-question.is-incorrect {
+  border-left-color: #c0392b;
+}
+
+.quiz-review-question h2 {
+  font-size: 1.1rem;
+}
+
+.quiz-review-status {
+  font-weight: 700;
 }
 
 .cta-banner {

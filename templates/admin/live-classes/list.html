@@ -1,0 +1,41 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Live Classes - DevRise Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div class="admin-page-title">
+    <h1>Live Classes</h1>
+    <p>Schedule and manage live classes with students.</p>
+  </div>
+  <div class="admin-page-actions">
+    <button type="button" class="admin-btn admin-btn-primary" id="new-class-button">Schedule New Class</button>
+  </div>
+</div>
+
+<div class="admin-section">
+  <div class="admin-section-header">
+    <h2>Live Class List</h2>
+  </div>
+  <div id="class-feedback" class="admin-inline-feedback" role="status" aria-live="polite"></div>
+  <div class="admin-table-wrap"><table class="admin-table">
+    <thead><tr><th>Title</th><th>Course</th><th>Platform</th><th>Scheduled</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody id="class-list"><tr><td colspan="6" class="admin-table-state">Loading classes...</td></tr></tbody>
+  </table></div>
+</div>
+
+<dialog id="class-dialog" class="admin-dialog"><form method="dialog" id="class-form" class="admin-form">
+  <div class="admin-dialog-header"><h2 id="class-dialog-title">Schedule New Class</h2><button type="button" class="admin-icon-button" id="close-class-dialog" aria-label="Close">&times;</button></div>
+  <input type="hidden" id="class-id">
+  <label>Course<select id="class-course" name="course_id" required></select></label>
+  <label>Title<input id="class-title" name="title" required maxlength="255"></label>
+  <label>Description<textarea id="class-description" name="description" rows="3"></textarea></label>
+  <div class="admin-form-grid"><label>Start<input id="class-start" name="scheduled_date" type="datetime-local" required></label><label>End<input id="class-end" name="end_time" type="datetime-local" required></label></div>
+  <div class="admin-form-grid"><label>Platform<select name="platform"><option>Google Meet</option><option>Zoom</option><option>In person</option></select></label><label>Status<select name="status"><option>Upcoming</option><option>Ongoing</option><option>Completed</option><option>Cancelled</option></select></label></div>
+  <label>Meeting link<input id="class-link" name="meeting_link" type="url" required maxlength="500"></label>
+  <label>Recording URL<input id="class-recording" name="recording_url" type="url" maxlength="500"></label>
+  <div class="admin-dialog-actions"><button type="button" class="admin-btn" id="cancel-class-dialog">Cancel</button><button type="submit" class="admin-btn admin-btn-primary">Save Class</button></div>
+</form></dialog>
+{% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/admin-live-classes.js') }}"></script>{% endblock %}

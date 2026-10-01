@@ -134,3 +134,92 @@ class LoginData(BaseModel):
             raise ValueError("You didn't enter any password.")
 
         return value
+
+
+class ProfileData(BaseModel):
+    fullname: str
+    email: str
+    gender: str
+    phoneNumber: str
+
+    @field_validator('fullname', 'email', 'gender', 'phoneNumber', mode='before')
+    @classmethod
+    def clean_fields(cls, value):
+        return clean_text(value)
+
+    @field_validator('fullname')
+    @classmethod
+    def validate_fullname(cls, value):
+        if len(value) < 3:
+            raise ValueError('Full name must be at least 3 characters.')
+
+        return value
+
+    @field_validator('email')
+    @classmethod
+    def validate_email(cls, value):
+        if len(value) < 6 or '@' not in value or '.' not in value:
+            raise ValueError('Please enter a valid email address.')
+
+        return value.lower()
+
+    @field_validator('phoneNumber')
+    @classmethod
+    def validate_phone_number(cls, value):
+        if not value:
+            return value
+
+        if len(value) < 7 or value in BLOCKED_PHONE_NUMBERS:
+            raise ValueError('Please enter a valid phone number.')
+
+        if not value.isdigit():
+            raise ValueError('Phone number must contain only digits.')
+
+        if len(value) > 15:
+            raise ValueError('Phone number must be less than 15 digits.')
+
+        return value
+
+    @field_validator('gender')
+    @classmethod
+    def validate_gender(cls, value):
+        value = value.lower()
+        if value not in VALID_GENDERS:
+            raise ValueError('Please select a valid gender.')
+
+        return value
+
+
+class PasswordChangeData(BaseModel):
+    current_password: str
+    new_password: str
+    confirm_password: str
+
+    @field_validator('current_password', 'new_password', 'confirm_password', mode='before')
+    @classmethod
+    def prepare_password(cls, value):
+        return '' if value is None else str(value)
+
+    @field_validator('current_password')
+    @classmethod
+    def validate_current_password(cls, value):
+        if not value:
+            raise ValueError('Enter your current password.')
+
+        return value
+
+    @field_validator('new_password')
+    @classmethod
+    def validate_new_password(cls, value):
+        if len(value) < 6:
+            raise ValueError('New password must be at least 6 characters.')
+
+        return value
+
+    @field_validator('confirm_password')
+    @classmethod
+    def validate_confirm_password(cls, value, info):
+        if value != info.data.get('new_password'):
+            raise ValueError('New passwords do not match.')
+
+        return value

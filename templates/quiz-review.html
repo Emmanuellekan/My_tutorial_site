@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}DevRise | Review {{ attempt.quiz.title }}{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="container"><span class="eyebrow">Quiz review</span><h1>{{ attempt.quiz.title }}</h1><p>You scored {{ attempt.score }}%. {% if attempt.passed %}Passed{% else %}Keep practicing{% endif %}.</p><a class="btn" href="{{ url_for('main.student_dashboard') }}">Back to dashboard</a></div></section>
+<section class="section"><div class="container"><div class="quiz-form">
+  {% for item in review %}<article class="card quiz-review-question{% if item.correct %} is-correct{% else %} is-incorrect{% endif %}"><h2>{{ loop.index }}. {{ item.question.question_text }}</h2><p><strong>Your answer:</strong> {% if item.selected %}{{ item.selected }}. {{ item.selected_text }}{% else %}No answer{% endif %}</p><p><strong>Correct answer:</strong> {{ item.question.correct_answer }}. {{ item.correct_text }}</p><p class="quiz-review-status">{% if item.correct %}Correct{% else %}Incorrect. Review this question before trying again.{% endif %}</p></article>{% endfor %}
+</div></div></section>
+{% endblock %}

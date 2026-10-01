@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}DevRise | {{ quiz.title }}{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="container"><span class="eyebrow">{{ quiz.course.title }}</span><h1>{{ quiz.title }}</h1><p>{{ quiz.description }}</p></div></section>
+<section class="section"><div class="container"><form method="post" class="quiz-form">
+  {% for question in questions %}<fieldset class="card quiz-question"><legend>{{ loop.index }}. {{ question.question_text }}</legend>{% for key, value in [('A', question.option_a), ('B', question.option_b), ('C', question.option_c), ('D', question.option_d)] if value %}<label><input type="radio" name="question_{{ question.id }}" value="{{ key }}" required> {{ key }}. {{ value }}</label>{% endfor %}</fieldset>{% else %}<p>This quiz is not ready yet.</p>{% endfor %}
+  {% if questions %}<button class="btn" type="submit">Submit quiz</button>{% endif %}
+</form></div></section>
+{% endblock %}

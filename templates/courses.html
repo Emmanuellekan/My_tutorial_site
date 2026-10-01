@@ -23,6 +23,16 @@
     </div>
 
     <div class="grid grid-3">
+      {% for course in published_courses %}
+      <a href="{{ url_for('main.start_learning') }}" class="course-link reveal">
+        <article class="card course-card">
+          {% if course.thumbnail %}<img class="course-image" src="{{ course.thumbnail }}" alt="{{ course.title }} course preview">{% endif %}
+          <span class="pill">Published</span>
+          <h3>{{ course.title }}</h3>
+          <p>{{ course.description }}</p>
+        </article>
+      </a>
+      {% endfor %}
       <a href="{{ url_for('main.start_learning') }}" class="course-link reveal">
         <article class="card course-card">
           <img

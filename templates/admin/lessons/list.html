@@ -1,0 +1,62 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Lessons - DevRise Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div class="admin-page-title">
+    <h1>Lessons</h1>
+    <p>Manage all lessons on your platform.</p>
+  </div>
+  <div class="admin-page-actions">
+    <button type="button" class="admin-btn admin-btn-primary" id="new-lesson-button">New Lesson</button>
+  </div>
+</div>
+
+<div class="admin-section">
+  <div class="admin-section-header">
+    <h2>Lesson List</h2>
+    <label class="admin-filter-label" for="lesson-course-filter">
+      Course
+      <select id="lesson-course-filter" class="admin-form-select" required>
+        <option value="">Select a course</option>
+      </select>
+    </label>
+  </div>
+  <div id="lesson-feedback" class="admin-inline-feedback" role="status" aria-live="polite"></div>
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr><th>Order</th><th>Title</th><th>Video</th><th>Status</th><th>Created</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="lesson-list"><tr><td colspan="6" class="admin-table-state">Select a course to load lessons.</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<dialog id="lesson-dialog" class="admin-dialog">
+  <form method="dialog" id="lesson-form" class="admin-form">
+    <div class="admin-dialog-header">
+      <h2 id="lesson-dialog-title">New Lesson</h2>
+      <button type="button" class="admin-icon-button" id="close-lesson-dialog" aria-label="Close">&times;</button>
+    </div>
+    <input type="hidden" id="lesson-id">
+    <label>Course<select id="lesson-course" name="course_id" required></select></label>
+    <label>Title<input id="lesson-title" name="title" required maxlength="255"></label>
+    <label>Written Content<textarea id="lesson-content" name="content" rows="7"></textarea></label>
+    <label>Video URL<input id="lesson-video-url" name="video_url" type="url" maxlength="500"></label>
+    <div class="admin-form-grid">
+      <label>Order<input id="lesson-order" name="order" type="number" min="1"></label>
+      <label>Status<select id="lesson-status" name="status"><option>Draft</option><option>Published</option></select></label>
+    </div>
+    <div class="admin-dialog-actions">
+      <button type="button" class="admin-btn" id="cancel-lesson-dialog">Cancel</button>
+      <button type="submit" class="admin-btn admin-btn-primary">Save Lesson</button>
+    </div>
+  </form>
+</dialog>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin-lessons.js') }}"></script>
+{% endblock %}
