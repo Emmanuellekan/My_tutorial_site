@@ -6,7 +6,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const feedback = document.querySelector('#class-feedback');
   const message = (text, error = false) => { feedback.textContent = text; feedback.className = `admin-inline-feedback${error ? ' is-error' : ''}`; };
   const toLocal = value => value ? value.slice(0, 16) : '';
-  const loadCourses = async () => { const response = await adminApiCall('/api/admin/courses?per_page=100'); courseField.innerHTML = (response.data || []).map(course => `<option value="${course.id}">${escapeHtml(course.title)}</option>`).join(''); };
+  const loadCourses = async () => {
+    courseField.disabled = true;
+    courseField.innerHTML = '<option value="">Loading courses...</option>';
+    try {
+      const response = await adminApiCall('/api/admin/courses?per_page=100');
+      const courses = response.data || [];
+      courseField.innerHTML = courses.length
+        ? `<option value="">Select a course</option>${courses.map(course => `<option value="${course.id}">${escapeHtml(course.title)}</option>`).join('')}`
+        : '<option value="">No courses available</option>';
+      courseField.disabled = false;
+    } catch (error) {
+      courseField.innerHTML = '<option value="">Unable to load courses</option>';
+      courseField.disabled = false;
+      message(error.message, true);
+    }
+  };
   const load = async () => { try { const response = await adminApiCall('/api/admin/live-classes?per_page=100'); list.innerHTML = response.data.length ? response.data.map(item => `<tr><td><strong>${escapeHtml(item.title)}</strong></td><td>${escapeHtml(item.course)}</td><td>${escapeHtml(item.platform)}</td><td>${new Date(item.scheduled_date).toLocaleString()}</td><td><span class="admin-status admin-status-${item.status.toLowerCase()}">${escapeHtml(item.status)}</span></td><td class="admin-table-actions"><button class="admin-btn admin-btn-small" data-action="edit" data-id="${item.id}">Edit</button><a class="admin-btn admin-btn-small" href="${item.meeting_link || '#'}" target="_blank" rel="noopener">Join</a><button class="admin-btn admin-btn-small admin-btn-danger" data-action="delete" data-id="${item.id}">Delete</button></td></tr>`).join('') : '<tr><td colspan="6" class="admin-table-state">No live classes found.</td></tr>'; } catch (error) { message(error.message, true); } };
   const openClass = async (id = null) => { form.reset(); document.querySelector('#class-id').value = id || ''; document.querySelector('#class-dialog-title').textContent = id ? 'Edit Live Class' : 'Schedule New Class'; await loadCourses(); if (id) { const item = (await adminApiCall(`/api/admin/live-classes/${id}`)).data; for (const [field, value] of Object.entries({ 'class-course': item.course_id, 'class-title': item.title, 'class-description': item.description, 'class-start': toLocal(item.scheduled_date), 'class-end': toLocal(item.end_time), 'class-link': item.meeting_link, 'class-recording': item.recording_url })) document.querySelector(`#${field}`).value = value; form.querySelector('[name="platform"]').value = item.platform; form.querySelector('[name="status"]').value = item.status; } dialog.showModal(); };
   form.addEventListener('submit', async event => { event.preventDefault(); const id = document.querySelector('#class-id').value; const payload = Object.fromEntries(new FormData(form)); payload.course_id = Number(payload.course_id); try { await adminApiCall(id ? `/api/admin/live-classes/${id}` : '/api/admin/live-classes', { method: id ? 'PUT' : 'POST', body: JSON.stringify(payload) }); dialog.close(); message(id ? 'Live class updated.' : 'Live class scheduled.'); load(); } catch (error) { message(error.message, true); } });
