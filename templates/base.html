@@ -18,14 +18,11 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-  <script>
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    OneSignalDeferred.push(async function(OneSignal) {
-      await OneSignal.init({
-        appId: "c3bdfeb8-7e06-4f96-a09c-dfe4a281e243",
-      });
-    });
-  </script>
+  {% if config.get('ONESIGNAL_APP_ID') %}
+  <meta name="onesignal-app-id" content="{{ config['ONESIGNAL_APP_ID'] }}">
+  <meta name="onesignal-user-id" content="{% if current_user.is_authenticated %}{{ current_user.id }}{% endif %}">
+  <script src="{{ url_for('static', filename='js/onesignal-init.js') }}" defer></script>
+  {% endif %}
 </head>
 <body>
   <div class="site-shell">
@@ -138,5 +135,6 @@
   </div>
 
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

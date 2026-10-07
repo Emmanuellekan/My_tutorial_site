@@ -17,6 +17,13 @@
   <div id="analytics-feedback" class="admin-inline-feedback" role="status" aria-live="polite"></div>
   <div class="admin-stats-grid" id="analytics-cards"></div>
 </div>
+
+<div class="admin-section">
+  <div class="admin-section-header">
+    <div><h2>Daily student activity</h2><p>Lesson completions and quiz attempts over the last seven days.</p></div>
+  </div>
+  <div class="admin-usage-chart" id="usage-chart" role="img" aria-label="Daily student activity for the last seven days"></div>
+</div>
 {% endblock %}
 
 {% block scripts %}<script src="{{ url_for('static', filename='js/admin-analytics.js') }}"></script>{% endblock %}

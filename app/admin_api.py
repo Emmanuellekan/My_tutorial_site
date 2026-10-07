@@ -890,7 +890,7 @@ def create_admin_api_blueprint():
                 day = datetime.utcnow().date() - timedelta(days=offset)
                 day_start = datetime.combine(day, datetime.min.time())
                 day_end = day_start + timedelta(days=1)
-                usage_count = db.session.query(
+                lesson_count = db.session.query(
                     func.count(StudentProgress.id)
                 ).filter(
                     StudentProgress.user_id.in_(db.session.query(User.id).filter_by(role='student')),
@@ -898,10 +898,17 @@ def create_admin_api_blueprint():
                     StudentProgress.completed_at >= day_start,
                     StudentProgress.completed_at < day_end,
                 ).scalar() or 0
+                quiz_count = QuizAttempt.query.filter(
+                    QuizAttempt.user_id.in_(db.session.query(User.id).filter_by(role='student')),
+                    QuizAttempt.completed_at >= day_start,
+                    QuizAttempt.completed_at < day_end,
+                ).count()
                 usage_days.append({
                     'label': day.strftime('%a'),
                     'date': day.isoformat(),
-                    'value': int(usage_count),
+                    'value': int(lesson_count) + quiz_count,
+                    'lesson_completions': int(lesson_count),
+                    'quiz_attempts': quiz_count,
                 })
 
             # Active students (with activity in last 7 days)
@@ -1077,7 +1084,20 @@ def create_admin_api_blueprint():
         if not title or not message:
             return jsonify({'ok': False, 'message': 'Title and message are required.'}), 400
         user_ids = [user.id for user in User.query.filter_by(role='student').all()]
-        created = create_bulk_notifications(user_ids, title, message)
-        return jsonify({'ok': True, 'message': f'Announcement sent to {len(created)} students.'}), 201
+        created, delivery_counts = create_bulk_notifications(user_ids, title, message)
+        return jsonify({
+            'ok': True,
+            'message': f'Announcement saved to {len(created)} student inboxes.',
+            'delivery': {
+                'in_app': len(created),
+                'push_accepted': delivery_counts['push'],
+                'email_accepted': delivery_counts['email'],
+                'push_configured': bool(
+                    current_app.config.get('ONESIGNAL_APP_ID')
+                    and current_app.config.get('ONESIGNAL_API_KEY')
+                ),
+                'email_configured': bool(current_app.config.get('MAIL_SERVER')),
+            },
+        }), 201
 
     return admin_api

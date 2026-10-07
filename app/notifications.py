@@ -1,5 +1,4 @@
 import json
-import os
 import smtplib
 from email.message import EmailMessage
 from urllib import request, error as urllib_error
@@ -66,47 +65,16 @@ def _send_onesignal_notification(user, title, message):
         return False
 
 
-def _send_fcm_notification(user, title, message):
-    server_key = current_app.config.get('FCM_SERVER_KEY')
-    if not server_key:
-        return False
-
-    payload = json.dumps({
-        'to': user.id,
-        'notification': {'title': title, 'body': message},
-        'data': {'type': 'announcement', 'user_id': str(user.id)},
-    }).encode('utf-8')
-
-    req = request.Request(
-        'https://fcm.googleapis.com/fcm/send',
-        data=payload,
-        headers={
-            'Content-Type': 'application/json; charset=utf-8',
-            'Authorization': f'key={server_key}',
-        },
-        method='POST',
-    )
-
-    try:
-        with request.urlopen(req, timeout=10) as response:
-            return response.status == 200
-    except urllib_error.URLError:
-        return False
-
-
 def deliver_notification(user, title, message):
     if user is None:
-        return False
+        return {'push': False, 'email': False}
 
-    provider = current_app.config.get('NOTIFICATION_PROVIDER', '').lower()
-    if provider == 'onesignal':
-        return _send_onesignal_notification(user, title, message)
-    if provider == 'fcm':
-        return _send_fcm_notification(user, title, message)
-
+    delivery = {'push': False, 'email': False}
+    if current_app.config.get('ONESIGNAL_APP_ID') and current_app.config.get('ONESIGNAL_API_KEY'):
+        delivery['push'] = _send_onesignal_notification(user, title, message)
     if current_app.config.get('MAIL_SERVER'):
-        return _send_email_notification(user, title, message)
-    return False
+        delivery['email'] = _send_email_notification(user, title, message)
+    return delivery
 
 
 def create_notification(user_id, title, message, notify=True):
@@ -126,13 +94,13 @@ def create_notification(user_id, title, message, notify=True):
 
 def create_bulk_notifications(user_ids, title, message):
     created = []
+    delivery_counts = {'push': 0, 'email': 0}
     for user_id in user_ids:
         notification = create_notification(user_id, title, message, notify=False)
         if notification is not None:
             created.append(notification)
-    if created:
-        for notification in created:
             user = User.query.get(notification.user_id)
-            if user is not None:
-                deliver_notification(user, title, message)
-    return created
+            delivery = deliver_notification(user, title, message)
+            for channel, sent in delivery.items():
+                delivery_counts[channel] += int(sent)
+    return created, delivery_counts

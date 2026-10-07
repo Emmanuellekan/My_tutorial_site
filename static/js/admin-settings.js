@@ -6,7 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const payload = Object.fromEntries(new FormData(announcement));
     try {
       const result = await adminApiCall('/api/admin/announcements', { method: 'POST', body: JSON.stringify(payload) });
-      announcement.reset(); announcementFeedback.textContent = result.message;
+      const delivery = result.delivery;
+      const pushStatus = delivery.push_configured ? `push accepted for ${delivery.push_accepted}` : 'push is not configured';
+      const emailStatus = delivery.email_configured ? `email accepted for ${delivery.email_accepted}` : 'email is not configured';
+      announcement.reset(); announcementFeedback.textContent = `${result.message} ${pushStatus}; ${emailStatus}.`;
+      announcementFeedback.classList.remove('is-error');
     } catch (error) { announcementFeedback.textContent = error.message; announcementFeedback.classList.add('is-error'); }
   });
 

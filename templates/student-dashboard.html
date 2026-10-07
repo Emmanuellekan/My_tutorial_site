@@ -14,12 +14,13 @@
 </div></section>
 <section class="section section-muted"><div class="container split-section">
   <div>
-    <div class="section-heading"><span class="eyebrow">Weekly activity</span><h2>Your learning usage</h2></div>
-    <div class="card step-card">
+    <div class="section-heading"><span class="eyebrow">Weekly activity</span><h2>Your learning usage</h2><p>Daily lesson completions and quiz attempts.</p></div>
+    <div class="card step-card" role="img" aria-label="Daily lesson completions and quiz attempts for the last seven days">
       <div style="display: flex; align-items: end; gap: 0.75rem; min-height: 180px; margin-top: 1rem;">
         {% for item in usage_data %}
           <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
-            <span style="display: block; height: {{ [20, item.value * 26 + 20] | min }}px; width: 100%; max-width: 36px; background: linear-gradient(180deg, #8b5cf6 0%, #4f46e5 100%); border-radius: 10px 10px 0 0; box-shadow: 0 8px 22px rgba(79, 70, 229, 0.18);"></span>
+            <small aria-hidden="true">{{ item.value }}</small>
+            <span title="{{ item.value }} learning actions" style="display: block; height: {{ [20, item.value * 26 + 20] | min }}px; width: 100%; max-width: 36px; background: linear-gradient(180deg, #8b5cf6 0%, #4f46e5 100%); border-radius: 10px 10px 0 0; box-shadow: 0 8px 22px rgba(79, 70, 229, 0.18);"></span>
             <small>{{ item.day }}</small>
             <small>{{ item.label.split(' ')[0] }}</small>
           </div>

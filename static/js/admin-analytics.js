@@ -14,5 +14,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       ['Live classes', `${data.live_classes.upcoming} upcoming / ${data.live_classes.completed} completed`]
     ];
     cards.innerHTML = values.map(([label, value]) => `<div class="admin-stat-card"><div class="admin-stat-content"><div class="admin-stat-value">${value}</div><div class="admin-stat-label">${label}</div></div></div>`).join('');
+
+    const chart = document.querySelector('#usage-chart');
+    const usage = data.students.usage || [];
+    const peak = Math.max(1, ...usage.map(day => Number(day.value) || 0));
+    chart.innerHTML = usage.map(day => {
+      const value = Number(day.value) || 0;
+      const height = value ? Math.max(8, value / peak * 100) : 3;
+      return `<div class="admin-usage-day" title="${day.date}: ${value} actions, ${day.lesson_completions} lessons and ${day.quiz_attempts} quizzes">
+        <span class="admin-usage-count">${value}</span>
+        <span class="admin-usage-track"><span class="admin-usage-bar" style="height: ${height}%"></span></span>
+        <span class="admin-usage-label">${day.label}</span>
+      </div>`;
+    }).join('');
   } catch (error) { feedback.textContent = error.message; feedback.classList.add('is-error'); }
 });

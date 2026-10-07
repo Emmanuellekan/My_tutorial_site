@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -123,6 +123,10 @@ def create_app():
         static_folder='../static'
     )
 
+    @app.get('/OneSignalSDKWorker.js')
+    def onesignal_service_worker():
+        return send_from_directory(app.static_folder, 'OneSignalSDKWorker.js')
+
     is_vercel = any(
         os.getenv(name)
         for name in ('VERCEL', 'VERCEL_ENV', 'VERCEL_URL', 'AWS_LAMBDA_FUNCTION_VERSION')
@@ -145,10 +149,8 @@ def create_app():
     app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME', '').strip()
     app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD', '').strip()
     app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'no-reply@devrise.local').strip()
-    app.config['NOTIFICATION_PROVIDER'] = os.getenv('NOTIFICATION_PROVIDER', '').strip().lower()
     app.config['ONESIGNAL_APP_ID'] = os.getenv('ONESIGNAL_APP_ID', '').strip()
     app.config['ONESIGNAL_API_KEY'] = os.getenv('ONESIGNAL_API_KEY', '').strip()
-    app.config['FCM_SERVER_KEY'] = os.getenv('FCM_SERVER_KEY', '').strip()
     app.config['PROFILE_IMAGE_UPLOAD_FOLDER'] = os.path.join(
         '/tmp' if is_vercel else app.static_folder,
         'uploads',

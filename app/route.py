@@ -472,14 +472,14 @@ def register_app(app, db):
             create_notification(
                 new_user.id,
                 'Welcome to DevRise',
-                f'Hi {new_user.fullname}, welcome to DevRise. This is where you learn practical tech skills, track your progress, and grow with support from our community.',
+                f'Hi {new_user.fullname}, welcome to DevRise. Learn practical tech skills through guided courses and projects, track your progress, take quizzes, join live classes, and get support from our community. We are glad you are here.',
             )
 
             for admin_user in User.query.filter_by(role='admin').all():
                 create_notification(
                     admin_user.id,
                     'New student account created',
-                    f'{new_user.fullname} ({new_user.email}) just created a new DevRise account.',
+                    f'{new_user.fullname} ({new_user.email}, {new_user.phoneNumber}) just created a new DevRise account.',
                 )
 
             login_user(new_user)
