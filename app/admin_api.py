@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from .app import db
 from .model import User, Course, Lesson, Quiz, QuizQuestion, QuizAttempt, StudentProgress, LiveClass, Feedback, Notification
+from .notifications import create_bulk_notifications
 from .admin_decorators import admin_required, founder_required
 
 
@@ -883,12 +884,32 @@ def create_admin_api_blueprint():
                 User.role == 'student'
             ).count()
 
+            # Daily usage for the last 7 days
+            usage_days = []
+            for offset in range(6, -1, -1):
+                day = datetime.utcnow().date() - timedelta(days=offset)
+                day_start = datetime.combine(day, datetime.min.time())
+                day_end = day_start + timedelta(days=1)
+                usage_count = db.session.query(
+                    func.count(StudentProgress.id)
+                ).filter(
+                    StudentProgress.user_id.in_(db.session.query(User.id).filter_by(role='student')),
+                    StudentProgress.completed == True,
+                    StudentProgress.completed_at >= day_start,
+                    StudentProgress.completed_at < day_end,
+                ).scalar() or 0
+                usage_days.append({
+                    'label': day.strftime('%a'),
+                    'date': day.isoformat(),
+                    'value': int(usage_count),
+                })
+
             # Active students (with activity in last 7 days)
-            seven_days_ago = datetime.utcnow() - timedelta(days=7)
-            active_students = User.query.filter(
-                User.role == 'student',
-                User.created_at <= datetime.utcnow()
-            ).count()
+            active_students = db.session.query(User.id).filter_by(role='student').count()
+            recent_activity = db.session.query(func.count(func.distinct(StudentProgress.user_id))).filter(
+                StudentProgress.completed == True,
+                StudentProgress.completed_at >= datetime.utcnow() - timedelta(days=7)
+            ).scalar() or 0
 
             # Course stats
             avg_lessons_per_course = db.session.query(func.avg(
@@ -906,7 +927,8 @@ def create_admin_api_blueprint():
                     'students': {
                         'total': User.query.filter_by(role='student').count(),
                         'recent': recent_registrations,
-                        'active': active_students
+                        'active': recent_activity,
+                        'usage': usage_days,
                     },
                     'courses': {
                         'total': Course.query.count(),
@@ -1054,9 +1076,8 @@ def create_admin_api_blueprint():
         message = str(data.get('message', '')).strip()
         if not title or not message:
             return jsonify({'ok': False, 'message': 'Title and message are required.'}), 400
-        notifications = [Notification(user_id=user.id, title=title, message=message) for user in User.query.filter_by(role='student')]
-        db.session.add_all(notifications)
-        db.session.commit()
-        return jsonify({'ok': True, 'message': f'Announcement sent to {len(notifications)} students.'}), 201
+        user_ids = [user.id for user in User.query.filter_by(role='student').all()]
+        created = create_bulk_notifications(user_ids, title, message)
+        return jsonify({'ok': True, 'message': f'Announcement sent to {len(created)} students.'}), 201
 
     return admin_api

@@ -28,6 +28,8 @@
     <input type="hidden" name="fullname" value="{{ current_user.fullname }}"><input type="hidden" name="email" value="{{ current_user.email }}">
     <label>Site name<input name="site_name" value="{{ settings.get('site_name', 'DevRise') }}" maxlength="100"></label>
     <label>Site description<textarea name="site_description" rows="3">{{ settings.get('site_description', '') }}</textarea></label>
+    <label>Support account name<input name="support_name" value="{{ settings.get('support_name', config['DEFAULT_SUPPORT_NAME']) }}" maxlength="150"></label>
+    <label>Support account number<input name="support_account_number" value="{{ settings.get('support_account_number', config['DEFAULT_SUPPORT_ACCOUNT_NUMBER']) }}" maxlength="50"></label>
     <label>Support WhatsApp number<input name="support_whatsapp" value="{{ settings.get('support_whatsapp', config['DEFAULT_SUPPORT_WHATSAPP']) }}" inputmode="numeric" maxlength="20"></label>
     <div class="admin-dialog-actions"><button class="admin-btn admin-btn-primary" type="submit">Save Platform Settings</button></div>
   </form>

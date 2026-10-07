@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}DevRise | Support Program{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">Support Program</span>
+    <h1>We are here to help you succeed.</h1>
+    <p>Need a quick answer or a direct support check-in? Reach out to the team below.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="card step-card" style="max-width: 680px; margin: 0 auto;">
+      <h2>Support contact</h2>
+      <p><strong>Account Name:</strong> {{ support_name }}</p>
+      <p><strong>Account Number:</strong> {{ support_account_number }}</p>
+      <p><strong>WhatsApp:</strong> {{ support_whatsapp }}</p>
+      <p>
+        If you need help with your learning path, account access, assignments, or course questions,
+        message the support team immediately and they will respond as soon as possible.
+      </p>
+      <div style="margin-top: 1rem;">
+        <a class="btn" href="https://wa.me/{{ support_whatsapp|replace(' ', '') }}" target="_blank" rel="noopener">Chat on WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

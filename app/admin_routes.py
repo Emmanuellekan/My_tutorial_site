@@ -138,7 +138,7 @@ def create_admin_blueprint():
                 current_user.email = email
                 if new_password:
                     current_user.password = generate_password_hash(new_password)
-                for key in ('site_name', 'site_description', 'support_whatsapp'):
+                for key in ('site_name', 'site_description', 'support_name', 'support_account_number', 'support_whatsapp'):
                     value = request.form.get(key, '').strip()
                     setting = PlatformSetting.query.get(key)
                     if setting is None:

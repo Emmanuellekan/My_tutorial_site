@@ -1,6 +1,6 @@
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from uuid import uuid4
 
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
@@ -12,6 +12,7 @@ from werkzeug.utils import secure_filename
 
 from .app import db
 from .model import Course, LiveClass, Lesson, Notification, Quiz, QuizAttempt, QuizQuestion, StudentProgress, User
+from .notifications import create_notification
 from .validation import LoginData, PasswordChangeData, ProfileData, SignupData, first_validation_error
 from .admin_routes import create_admin_blueprint
 from .admin_api import create_admin_api_blueprint
@@ -90,10 +91,41 @@ def register_app(app, db):
         return render_template('index.html')
 
 
+    @main.route('/support')
+    def support_page():
+        from .model import PlatformSetting
+
+        settings = {setting.key: setting.value for setting in PlatformSetting.query.all()}
+        return render_template(
+            'support.html',
+            support_name=settings.get('support_name', app.config['DEFAULT_SUPPORT_NAME']),
+            support_account_number=settings.get('support_account_number', app.config['DEFAULT_SUPPORT_ACCOUNT_NUMBER']),
+            support_whatsapp=settings.get('support_whatsapp', app.config['DEFAULT_SUPPORT_WHATSAPP']),
+        )
+
     @main.route('/dashboard')
     @login_required
     def student_dashboard():
         courses = Course.query.filter_by(status='Published').order_by(Course.created_at.desc()).all()
+        usage_data = []
+        today = datetime.utcnow().date()
+        for offset in range(6, -1, -1):
+            target_day = today - timedelta(days=offset)
+            lesson_count = StudentProgress.query.filter(
+                StudentProgress.user_id == current_user.id,
+                StudentProgress.completed == True,
+                StudentProgress.completed_at != None,
+                db.func.date(StudentProgress.completed_at) == target_day.isoformat(),
+            ).count()
+            quiz_count = QuizAttempt.query.filter(
+                QuizAttempt.user_id == current_user.id,
+                db.func.date(QuizAttempt.completed_at) == target_day.isoformat(),
+            ).count()
+            usage_data.append({
+                'day': target_day.strftime('%a'),
+                'label': target_day.strftime('%d %b'),
+                'value': lesson_count + quiz_count,
+            })
         course_cards = []
         for course in courses:
             total_lessons = Lesson.query.filter_by(course_id=course.id, status='Published').count()
@@ -125,6 +157,7 @@ def register_app(app, db):
             upcoming_classes=upcoming_classes,
             recent_attempts=recent_attempts,
             current_user_quizzes=current_user_quizzes,
+            usage_data=usage_data,
         )
 
 
@@ -435,6 +468,19 @@ def register_app(app, db):
 
             db.session.add(new_user)
             db.session.commit()
+
+            create_notification(
+                new_user.id,
+                'Welcome to DevRise',
+                f'Hi {new_user.fullname}, welcome to DevRise. This is where you learn practical tech skills, track your progress, and grow with support from our community.',
+            )
+
+            for admin_user in User.query.filter_by(role='admin').all():
+                create_notification(
+                    admin_user.id,
+                    'New student account created',
+                    f'{new_user.fullname} ({new_user.email}) just created a new DevRise account.',
+                )
 
             login_user(new_user)
             return auth_success('Account created successfully.', 'main.index')

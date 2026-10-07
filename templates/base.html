@@ -16,6 +16,16 @@
     rel="stylesheet"
   >
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "c3bdfeb8-7e06-4f96-a09c-dfe4a281e243",
+      });
+    });
+  </script>
 </head>
 <body>
   <div class="site-shell">
@@ -39,11 +49,13 @@
               <a href="{{ url_for('main.courses') }}" class="{% if request.endpoint == 'main.courses' %}is-active{% endif %}">Courses</a>
               <a href="{{ url_for('main.courses') }}#learning-paths">Paths</a>
               <a href="{{ url_for('main.notifications') }}">Notifications</a>
+              <a href="{{ url_for('main.support_page') }}">Support</a>
               <a href="{{ url_for('main.student_live_classes') }}">Live Classes</a>
             {% else %}
               <a href="{{ url_for('main.courses') }}" class="{% if request.endpoint == 'main.courses' %}is-active{% endif %}">Courses</a>
               <a href="{{ url_for('main.courses') }}#learning-paths">Paths</a>
               <a href="{{ url_for('main.notifications') }}">Notifications</a>
+              <a href="{{ url_for('main.support_page') }}">Support</a>
               <a href="{{ url_for('main.student_live_classes') }}">Live Classes</a>
             {% endif %}
             <a href="#contact">Contact</a>
@@ -111,6 +123,7 @@
           <h3>Explore</h3>
           <a href="{{ url_for('main.index') }}">Home</a>
           <a href="{{ url_for('main.courses') }}">Courses</a>
+          <a href="{{ url_for('main.support_page') }}">Support</a>
           <a href="{{ url_for('main.signup') }}">Sign Up</a>
           <a href="{{ url_for('main.login') }}">Login</a>
         </div>

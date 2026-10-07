@@ -138,6 +138,17 @@ def create_app():
 
     app.config['FOUNDER_EMAIL'] = os.getenv('FOUNDER_EMAIL', 'emmanuellekan30@gmail.com').strip().lower()
     app.config['DEFAULT_SUPPORT_WHATSAPP'] = '2348106775065'
+    app.config['DEFAULT_SUPPORT_NAME'] = 'DevRise Support Team'
+    app.config['DEFAULT_SUPPORT_ACCOUNT_NUMBER'] = '0000000000'
+    app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', '').strip()
+    app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', '587'))
+    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME', '').strip()
+    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD', '').strip()
+    app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'no-reply@devrise.local').strip()
+    app.config['NOTIFICATION_PROVIDER'] = os.getenv('NOTIFICATION_PROVIDER', '').strip().lower()
+    app.config['ONESIGNAL_APP_ID'] = os.getenv('ONESIGNAL_APP_ID', '').strip()
+    app.config['ONESIGNAL_API_KEY'] = os.getenv('ONESIGNAL_API_KEY', '').strip()
+    app.config['FCM_SERVER_KEY'] = os.getenv('FCM_SERVER_KEY', '').strip()
     app.config['PROFILE_IMAGE_UPLOAD_FOLDER'] = os.path.join(
         '/tmp' if is_vercel else app.static_folder,
         'uploads',
@@ -167,6 +178,12 @@ def create_app():
             'platform_settings': values,
             'support_whatsapp': values.get(
                 'support_whatsapp', app.config['DEFAULT_SUPPORT_WHATSAPP']
+            ),
+            'support_name': values.get(
+                'support_name', app.config['DEFAULT_SUPPORT_NAME']
+            ),
+            'support_account_number': values.get(
+                'support_account_number', app.config['DEFAULT_SUPPORT_ACCOUNT_NUMBER']
             ),
         }
 
